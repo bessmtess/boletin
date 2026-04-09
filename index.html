@@ -1,1294 +1,342 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Estadístico - Sistema Previsional de Paraguay</title>
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            --primary-blue: #1e3a8a;
-            --secondary-blue: #3b82f6;
-            --accent-red: #dc2626;
-            --accent-green: #10b981;
-            --dark-gray: #1f2937;
-            --medium-gray: #6b7280;
-            --light-gray: #f3f4f6;
-            --ANDE-color: #2563EB;
-            --Bancaria-color: #10B981;
-            --IPS-color: #8b5cf6;
-            --background-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: var(--background-gradient);
-            color: var(--dark-gray);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-        
-        /* Header */
-        .header {
-            background: white;
-            padding: 1.5rem 2rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border-bottom: 4px solid var(--primary-blue);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .logo-icon {
-            background: var(--primary-blue);
-            color: white;
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        
-        .header-text h1 {
-            color: var(--primary-blue);
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-        
-        .header-text p {
-            color: var(--medium-gray);
-            font-size: 0.95rem;
-        }
-        
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .year-selector {
-            background: var(--light-gray);
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            font-weight: 600;
-            color: var(--primary-blue);
-            cursor: pointer;
-        }
-        
-        .update-badge {
-            background: var(--accent-green);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        /* Main Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        /* Estadísticas principales */
-        .stats-highlight {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-        }
-        
-        .stat-card {
-            background: white;
-            padding: 1.75rem;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border-top: 4px solid var(--primary-blue);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-        }
-        
-        .stat-card.ANDE {
-            border-top-color: var(--ANDE-color);
-        }
-        
-        .stat-card.Bancaria {
-            border-top-color: var(--Bancaria-color);
-        }
-        
-        .stat-card.IPS {
-            border-top-color: var(--IPS-color);
-        }
-        
-        .stat-card .stat-label {
-            color: var(--medium-gray);
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .stat-card .value {
-            color: var(--dark-gray);
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            line-height: 1;
-        }
-        
-        .stat-card .subtext {
-            color: var(--medium-gray);
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-        }
-        
-        .trend {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        .trend.positive {
-            color: var(--accent-green);
-        }
-        
-        .trend.negative {
-            color: var(--accent-red);
-        }
-        
-        /* Sistema de pestañas mejorado */
-        .tabs-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            margin-bottom: 2.5rem;
-        }
-        
-        .tabs-header {
-            display: flex;
-            background: var(--light-gray);
-            border-bottom: 1px solid #e5e7eb;
-            padding: 0 1.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .tab {
-            padding: 1.25rem 1.5rem;
-            font-weight: 600;
-            color: var(--medium-gray);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .tab:hover {
-            color: var(--primary-blue);
-            background: rgba(59, 130, 246, 0.05);
-        }
-        
-        .tab.active {
-            color: var(--primary-blue);
-            border-bottom-color: var(--primary-blue);
-            background: white;
-        }
-        
-        .tab-content {
-            display: none;
-            padding: 2.5rem;
-        }
-        
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Diseño de secciones dentro de las pestañas */
-        .tab-section {
-            margin-bottom: 2.5rem;
-        }
-        
-        .tab-section:last-child {
-            margin-bottom: 0;
-        }
-        
-        .section-title {
-            color: var(--primary-blue);
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--light-gray);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .chart-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        @media (max-width: 1100px) {
-            .chart-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .chart-container {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            transition: transform 0.3s ease;
-        }
-        
-        .chart-container:hover {
-            transform: translateY(-4px);
-        }
-        
-        .chart-title {
-            color: var(--dark-gray);
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .chart-wrapper {
-            height: 300px;
-            position: relative;
-        }
-        
-        /* Tarjetas de comparativa */
-        .comparison-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .comparison-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .comparison-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .comparison-card h3 {
-            color: var(--medium-gray);
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-        
-        .comparison-value {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-        
-        .comparison-card.ANDE .comparison-value {
-            color: var(--ANDE-color);
-        }
-        
-        .comparison-card.Bancaria .comparison-value {
-            color: var(--Bancaria-color);
-        }
-        
-        .comparison-card.IPS .comparison-value {
-            color: var(--IPS-color);
-        }
-        
-        /* Tabla de datos */
-        .data-table-container {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
-        }
-        
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .data-table th {
-            background: var(--primary-blue);
-            color: white;
-            text-align: left;
-            padding: 1rem 1.5rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .data-table td {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .data-table tr:hover {
-            background: var(--light-gray);
-        }
-        
-        .caja-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .caja-badge.ANDE {
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--ANDE-color);
-        }
-        
-        .caja-badge.Bancaria {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--Bancaria-color);
-        }
-        
-        .caja-badge.IPS {
-            background: rgba(139, 92, 246, 0.1);
-            color: var(--IPS-color);
-        }
-        
-        /* Footer */
-        .footer {
-            background: var(--dark-gray);
-            color: white;
-            padding: 2.5rem 2rem;
-            margin-top: 3rem;
-        }
-        
-        .footer-container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 2rem;
-        }
-        
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .footer-logo-icon {
-            background: white;
-            color: var(--primary-blue);
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-        
-        .footer-logo-text h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .footer-logo-text p {
-            color: #9ca3af;
-            font-size: 0.9rem;
-        }
-        
-        .footer-description {
-            color: #9ca3af;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-        
-        .footer-section h4 {
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 0.75rem;
-        }
-        
-        .footer-links a {
-            color: #9ca3af;
-            text-decoration: none;
-            transition: color 0.3s ease;
-            font-size: 0.9rem;
-        }
-        
-        .footer-links a:hover {
-            color: white;
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 2rem;
-            margin-top: 2rem;
-            border-top: 1px solid #374151;
-            color: #9ca3af;
-            font-size: 0.85rem;
-        }
-        
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .stats-highlight {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .header-controls {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .stats-highlight {
-                grid-template-columns: 1fr;
-            }
-            
-            .comparison-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .tabs-header {
-                overflow-x: auto;
-                flex-wrap: nowrap;
-            }
-            
-            .tab {
-                white-space: nowrap;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BESS 2025 - Tablero Estadístico de Seguridad Social</title>
+  <meta name="description" content="Boletín Estadístico de Seguridad Social de Paraguay 2025 - Tablero interactivo con datos de las 7 cajas previsionales">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-container">
-            <div class="logo-section">
-                <div class="logo-icon">
-                    <i class="fas fa-chart-bar"></i>
-                </div>
-                <div class="header-text">
-                    <h1>Sistema Previsional de Paraguay</h1>
-                    <p>Dashboard Estadístico Interactivo - ANDE, Caja Bancaria e IPS (2020-2024)</p>
-                </div>
-            </div>
-            <div class="header-controls">
-                <div class="year-selector">
-                    <i class="fas fa-calendar-alt"></i>
-                    <select id="yearFilter">
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
-                        <option value="2022">2022</option>
-                        <option value="2021" selected>2021</option>
-                        <option value="2020">2020</option>
-                    </select>
-                </div>
-                <div class="update-badge">
-                    <i class="fas fa-sync-alt"></i>
-                    Última actualización: Diciembre 2024
-                </div>
-            </div>
+<body x-data="dashboard" :class="darkMode ? 'dark bg-slate-900 text-slate-200' : 'light bg-slate-50 text-slate-800'">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" :class="{ open: sidebarOpen }" style="background: #1F3A66;">
+    <div style="padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+      <div style="font-size: 11px; color: #70AD47; font-weight: 700; letter-spacing: 1px;">MTESS - DGESS</div>
+      <div style="font-size: 16px; color: white; font-weight: 700; margin-top: 4px;">BESS 2025</div>
+      <div style="font-size: 11px; color: #94A3B8; margin-top: 2px;">Boletín Estadístico<br>de Seguridad Social</div>
+    </div>
+    <nav style="padding: 12px 0;">
+      <template x-for="s in sections" :key="s.id">
+        <a class="sidebar-link" :class="{ active: section === s.id }" @click="navigate(s.id)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" :d="s.icon"/>
+          </svg>
+          <span x-text="s.label"></span>
+        </a>
+      </template>
+    </nav>
+    <div style="position:absolute;bottom:20px;left:20px;right:20px;">
+      <button @click="toggleDark()" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:#B4C7E7;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:8px;justify-content:center;">
+        <span x-text="darkMode ? 'Modo Claro' : 'Modo Oscuro'"></span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ===== MOBILE HAMBURGER ===== -->
+  <button @click="sidebarOpen = !sidebarOpen" class="lg-hidden" style="position:fixed;top:12px;left:12px;z-index:50;background:#1F3A66;color:white;border:none;border-radius:10px;padding:10px 14px;cursor:pointer;font-size:20px;display:none;">
+    <span x-text="sidebarOpen ? 'X' : '='"></span>
+  </button>
+  <style>@media(max-width:1023px){.lg-hidden{display:block!important;}}</style>
+
+  <!-- ===== OVERLAY ===== -->
+  <div x-show="sidebarOpen" @click="sidebarOpen=false" x-transition.opacity style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:35;display:none;"></div>
+  <style>@media(max-width:1023px){[x-show="sidebarOpen"]{display:block!important;}}</style>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main-content">
+
+    <!-- HERO + KPIs -->
+    <header class="hero-gradient" style="padding: 40px 32px 32px;">
+      <div style="max-width: 1400px; margin: 0 auto;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:28px;">
+          <div>
+            <h1 style="color:white;font-size:1.75rem;font-weight:800;margin:0;">Boletín Estadístico de Seguridad Social</h1>
+            <p style="color:#B4C7E7;font-size:0.95rem;margin:4px 0 0;">Paraguay - MTESS / Dirección General de Estadísticas y Seguridad Social</p>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;" class="year-pills-row">
+            <template x-for="y in years" :key="y">
+              <button class="year-pill" :class="selectedYear===y ? 'active-pill' : 'inactive'" @click="setYear(y)" x-text="y"></button>
+            </template>
+          </div>
         </div>
+
+        <!-- KPI Cards -->
+        <div class="grid-kpi">
+          <div class="kpi-card anim-fade-up anim-delay-1">
+            <div class="kpi-label">Cotizantes Activos</div>
+            <div class="kpi-number" id="kpi-activos">0</div>
+            <div class="kpi-change" :class="(getKPIChange('total_activos')??0)>=0?'positive':'negative'"
+                 x-show="getKPIChange('total_activos')!==null"
+                 x-text="formatPct(getKPIChange('total_activos'))+ ' vs. año anterior'"></div>
+          </div>
+          <div class="kpi-card anim-fade-up anim-delay-2">
+            <div class="kpi-label">Beneficiarios Pasivos</div>
+            <div class="kpi-number" id="kpi-pasivos">0</div>
+            <div class="kpi-change" :class="(getKPIChange('total_pasivos')??0)>=0?'negative':'positive'"
+                 x-show="getKPIChange('total_pasivos')!==null"
+                 x-text="formatPct(getKPIChange('total_pasivos'))+ ' vs. año anterior'"></div>
+          </div>
+          <div class="kpi-card anim-fade-up anim-delay-3">
+            <div class="kpi-label">Relación Activos/Pasivos</div>
+            <div class="kpi-number" id="kpi-ratio">0</div>
+            <div class="kpi-change" :style="'color:'+ratioColor(getKPI('ratio'))"
+                 x-text="ratioLabel(getKPI('ratio'))"></div>
+          </div>
+          <div class="kpi-card anim-fade-up anim-delay-4">
+            <div class="kpi-label">Masa Salarial Total</div>
+            <div class="kpi-number" id="kpi-masa" style="font-size:1.8rem;">Gs. 0</div>
+            <div class="kpi-change" :class="(getKPIChange('masa_salarial')??0)>=0?'positive':'negative'"
+                 x-show="getKPIChange('masa_salarial')!==null"
+                 x-text="formatPct(getKPIChange('masa_salarial'))+ ' vs. año anterior'"></div>
+          </div>
+        </div>
+      </div>
     </header>
 
-    <!-- Contenido Principal -->
-    <main class="container">
-        <!-- Estadísticas principales -->
-        <section class="stats-highlight">
-            <div class="stat-card">
-                <div class="stat-label">
-                    <i class="fas fa-user-check"></i>
-                    Afiliados Activos Totales
-                </div>
-                <div class="value">17,413</div>
-                <div class="subtext">Sistema consolidado 2021</div>
-                <div class="trend positive">
-                    <i class="fas fa-arrow-up"></i>
-                    5.2% vs 2020
-                </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-label">
-                    <i class="fas fa-user-friends"></i>
-                    Beneficiarios Pasivos
-                </div>
-                <div class="value">5,268</div>
-                <div class="subtext">Sistema consolidado 2021</div>
-                <div class="trend positive">
-                    <i class="fas fa-arrow-up"></i>
-                    3.1% vs 2020
-                </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-label">
-                    <i class="fas fa-balance-scale"></i>
-                    Ratio Activos/Pasivos
-                </div>
-                <div class="value">3.31</div>
-                <div class="subtext">Por cada jubilado hay 3.31 activos</div>
-                <div class="trend negative">
-                    <i class="fas fa-arrow-down"></i>
-                    0.04 vs 2020
-                </div>
-            </div>
-            
-            <div class="stat-card">
-                <div class="stat-label">
-                    <i class="fas fa-money-bill-wave"></i>
-                    Salario Promedio
-                </div>
-                <div class="value">8.5M Gs.</div>
-                <div class="subtext">Promedio sistema previsional</div>
-                <div class="trend positive">
-                    <i class="fas fa-arrow-up"></i>
-                    18.5% vs 2020
-                </div>
-            </div>
-        </section>
+    <!-- SECTION CONTENT -->
+    <main style="max-width: 1400px; margin: 0 auto; padding: 32px;">
 
-        <!-- Sistema de pestañas -->
-        <div class="tabs-container">
-            <div class="tabs-header">
-                <div class="tab active" data-tab="resumen">
-                    <i class="fas fa-home"></i> Resumen General
-                </div>
-                <div class="tab" data-tab="ande">
-                    <i class="fas fa-bolt"></i> Caja ANDE
-                </div>
-                <div class="tab" data-tab="bancaria">
-                    <i class="fas fa-university"></i> Caja Bancaria
-                </div>
-                <div class="tab" data-tab="ips">
-                    <i class="fas fa-hospital"></i> IPS
-                </div>
-                <div class="tab" data-tab="comparativa">
-                    <i class="fas fa-chart-line"></i> Comparativa
-                </div>
-                <div class="tab" data-tab="proyecciones">
-                    <i class="fas fa-chart-area"></i> Proyecciones
-                </div>
-            </div>
+      <!-- LOADING -->
+      <div x-show="loading" style="text-align:center;padding:80px 0;">
+        <div class="skeleton" style="width:200px;height:24px;margin:0 auto 16px;"></div>
+        <div class="skeleton" style="width:300px;height:16px;margin:0 auto;"></div>
+      </div>
 
-            <!-- Pestaña: Resumen General -->
-            <div id="resumen" class="tab-content active">
-                <div class="tab-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-chart-pie"></i>
-                        Distribución del Sistema Previsional
-                    </h2>
-                    <div class="chart-grid">
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Afiliados Activos por Caja (2024)
-                                <span class="chart-subtitle">Total: 16,234</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartResumen1"></div>
-                        </div>
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Evolución de Afiliados Activos
-                                <span class="chart-subtitle">2020-2024</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartResumen2"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="tab-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-users"></i>
-                        Indicadores Clave por Caja (2024)
-                    </h2>
-                    <div class="comparison-cards">
-                        <div class="comparison-card ANDE">
-                            <h3>Caja ANDE</h3>
-                            <div class="comparison-value">7,520</div>
-                            <div class="comparison-label">Afiliados Activos</div>
-                            <div class="comparison-sub">Ratio: 3.50</div>
-                        </div>
-                        <div class="comparison-card Bancaria">
-                            <h3>Caja Bancaria</h3>
-                            <div class="comparison-value">5,893</div>
-                            <div class="comparison-label">Afiliados Activos</div>
-                            <div class="comparison-sub">Ratio: 3.20</div>
-                        </div>
-                        <div class="comparison-card IPS">
-                            <h3>IPS</h3>
-                            <div class="comparison-value">4,000</div>
-                            <div class="comparison-label">Afiliados Activos</div>
-                            <div class="comparison-sub">Ratio: 3.14</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <!-- ===== PANORAMA GENERAL ===== -->
+      <section x-show="!loading && section==='panorama'" x-cloak>
+        <h2 class="section-title">Panorama General</h2>
+        <p class="section-subtitle">Vista consolidada de las 7 cajas previsionales del sistema de seguridad social paraguayo.</p>
 
-            <!-- Pestaña: Caja ANDE -->
-            <div id="ande" class="tab-content">
-                <div class="tab-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-bolt"></i>
-                        Caja de Previsión ANDE - Estadísticas Detalladas
-                    </h2>
-                    <div class="chart-grid">
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Afiliados Activos ANDE por Edad (2024)
-                                <span class="chart-subtitle">Distribución etaria</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartAnde1"></div>
-                        </div>
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Beneficiarios Pasivos ANDE por Tipo
-                                <span class="chart-subtitle">2024</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartAnde2"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="tab-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-history"></i>
-                        Evolución Histórica ANDE
-                    </h2>
-                    <div class="chart-container">
-                        <div class="chart-title">
-                            Tendencia 2020-2024
-                            <span class="chart-subtitle">Caja ANDE</span>
-                        </div>
-                        <div class="chart-wrapper" id="chartAnde3"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pestaña: Caja Bancaria -->
-            <div id="bancaria" class="tab-content">
-                <div class="tab-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-university"></i>
-                        Caja Bancaria - Estadísticas Detalladas
-                    </h2>
-                    <div class="chart-grid">
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Pirámide Poblacional (2024)
-                                <span class="chart-subtitle">Hombres vs Mujeres</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartBancaria1"></div>
-                        </div>
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Evolución Salarial 2020-2024
-                                <span class="chart-subtitle">Salario promedio</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartBancaria2"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pestaña: IPS -->
-            <div id="ips" class="tab-content">
-                <div class="tab-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-hospital"></i>
-                        Instituto de Previsión Social - Estadísticas
-                    </h2>
-                    <div class="chart-grid">
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Distribución de Beneficiarios IPS
-                                <span class="chart-subtitle">Por tipo de prestación</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartIps1"></div>
-                        </div>
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Tendencia de Afiliación
-                                <span class="chart-subtitle">2020-2024</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartIps2"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pestaña: Comparativa -->
-            <div id="comparativa" class="tab-content">
-                <div class="tab-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-balance-scale"></i>
-                        Comparativa entre Cajas Previsionales
-                    </h2>
-                    <div class="chart-grid">
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Afiliados Activos por Caja (2024)
-                                <span class="chart-subtitle">Comparación directa</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartComparativa1"></div>
-                        </div>
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Ratio Activos/Pasivos
-                                <span class="chart-subtitle">Sostenibilidad del sistema</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartComparativa2"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="tab-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-table"></i>
-                        Tabla Comparativa Detallada
-                    </h2>
-                    <div class="data-table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Caja Previsional</th>
-                                    <th>Afiliados Activos</th>
-                                    <th>Beneficiarios Pasivos</th>
-                                    <th>Total</th>
-                                    <th>Ratio A/P</th>
-                                    <th>Crecimiento Anual</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="caja-badge ANDE">ANDE</span></td>
-                                    <td>7,520</td>
-                                    <td>2,150</td>
-                                    <td>9,670</td>
-                                    <td>3.50</td>
-                                    <td class="positive">+2.1%</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="caja-badge Bancaria">Caja Bancaria</span></td>
-                                    <td>5,893</td>
-                                    <td>1,842</td>
-                                    <td>7,735</td>
-                                    <td>3.20</td>
-                                    <td class="positive">+3.5%</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="caja-badge IPS">IPS</span></td>
-                                    <td>4,000</td>
-                                    <td>1,276</td>
-                                    <td>5,276</td>
-                                    <td>3.14</td>
-                                    <td class="positive">+1.8%</td>
-                                </tr>
-                                <tr style="background-color: #f8fafc; font-weight: 600;">
-                                    <td>TOTAL SISTEMA</td>
-                                    <td>17,413</td>
-                                    <td>5,268</td>
-                                    <td>22,681</td>
-                                    <td>3.31</td>
-                                    <td class="positive">+2.5%</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pestaña: Proyecciones -->
-            <div id="proyecciones" class="tab-content">
-                <div class="tab-section">
-                    <h2 class="section-title">
-                        <i class="fas fa-chart-area"></i>
-                        Proyecciones del Sistema Previsional
-                    </h2>
-                    <div class="chart-grid">
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Proyección de Afiliados Activos
-                                <span class="chart-subtitle">2024-2030</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartProyecciones1"></div>
-                        </div>
-                        <div class="chart-container">
-                            <div class="chart-title">
-                                Proyección del Ratio A/P
-                                <span class="chart-subtitle">Sostenibilidad futura</span>
-                            </div>
-                            <div class="chart-wrapper" id="chartProyecciones2"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="section-card" style="margin-bottom:24px;">
+          <div id="chart-evolution" class="chart-container"></div>
         </div>
+        <div class="grid-2" style="margin-bottom:24px;">
+          <div class="section-card"><div id="chart-activos-caja" class="chart-container"></div></div>
+          <div class="section-card"><div id="chart-pasivos-caja" class="chart-container"></div></div>
+        </div>
+        <div class="grid-2">
+          <div class="section-card"><div id="chart-dist-caja" class="chart-container"></div></div>
+          <div class="section-card"><div id="chart-donut-ben" class="chart-container"></div></div>
+        </div>
+      </section>
+
+      <!-- ===== PIRAMIDES ===== -->
+      <section x-show="!loading && section==='piramides'" x-cloak>
+        <h2 class="section-title">Pirámides Poblacionales</h2>
+        <p class="section-subtitle">Distribución por edad y sexo de cotizantes y beneficiarios.</p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
+          <button class="caja-pill" :class="selectedCaja==='Todas'?'active-caja':''" style="border-color:#6B7280;background:rgba(107,114,128,0.1);color:#6B7280;" @click="setCaja('Todas')">Todas las Cajas</button>
+          <template x-for="c in ['IPS','Fiscal','Ande','Bancaria','Cajubi','Ferroviaria','Municipal']" :key="c">
+            <button class="caja-pill" :class="selectedCaja===c?'active-caja':''" :style="'border-color:'+CAJA_COLORS[c]+';color:'+CAJA_COLORS[c]+(selectedCaja===c?';background:'+CAJA_COLORS[c]+'15':'')" @click="setCaja(c)" x-text="c"></button>
+          </template>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:24px;">
+          <div class="section-card"><div id="chart-pyramid-activos" class="chart-container"></div></div>
+          <div class="section-card"><div id="chart-pyramid-pasivos" class="chart-container"></div></div>
+        </div>
+
+        <h3 style="font-size:1.1rem;font-weight:600;margin-bottom:12px;">Comparativo por Caja (Activos)</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+          <template x-for="c in ['IPS','Fiscal','Ande','Bancaria','Cajubi','Ferroviaria','Municipal']" :key="'mini-'+c">
+            <div class="section-card" style="padding:8px;">
+              <div :id="'mini-pyr-'+c" style="height:200px;"></div>
+            </div>
+          </template>
+        </div>
+      </section>
+
+      <!-- ===== ANALISIS POR CAJA ===== -->
+      <section x-show="!loading && section==='caja'" x-cloak>
+        <h2 class="section-title">Análisis por Caja</h2>
+        <p class="section-subtitle">Exploración detallada de cada caja previsional.</p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;">
+          <template x-for="c in ['IPS','Fiscal','Ande','Bancaria','Cajubi','Ferroviaria','Municipal']" :key="c">
+            <button class="caja-pill" :class="selectedCaja===c?'active-caja':''" :style="'border-color:'+CAJA_COLORS[c]+';color:'+CAJA_COLORS[c]+(selectedCaja===c?';background:'+CAJA_COLORS[c]+'20':'')" @click="setCaja(c)" x-text="c"></button>
+          </template>
+        </div>
+
+        <!-- Info Card -->
+        <div class="section-card" style="margin-bottom:24px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;">
+          <div style="flex:1;min-width:200px;">
+            <h3 style="font-size:1.3rem;font-weight:700;margin:0;" x-text="getCajaInfo().tasas?.caja_largo || selectedCaja"></h3>
+            <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;">
+              <div>
+                <div style="font-size:0.75rem;opacity:0.6;">Activos</div>
+                <div style="font-size:1.2rem;font-weight:700;" x-text="formatNumber(getCajaInfo().kpis?.activos || 0)"></div>
+              </div>
+              <div>
+                <div style="font-size:0.75rem;opacity:0.6;">Pasivos</div>
+                <div style="font-size:1.2rem;font-weight:700;" x-text="formatNumber(getCajaInfo().kpis?.pasivos || 0)"></div>
+              </div>
+              <div>
+                <div style="font-size:0.75rem;opacity:0.6;">Ratio A/P</div>
+                <div class="ratio-badge" :style="'background:'+ratioColor(getCajaInfo().kpis?.ratio||0)+'20;color:'+ratioColor(getCajaInfo().kpis?.ratio||0)" x-text="(getCajaInfo().kpis?.ratio||0).toFixed(2)"></div>
+              </div>
+              <div>
+                <div style="font-size:0.75rem;opacity:0.6;">Tasa Total Aporte</div>
+                <div style="font-size:1.2rem;font-weight:700;" x-text="(getCajaInfo().tasas?.tasa_total||0)+'%'"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card" style="margin-bottom:24px;">
+          <div id="chart-caja-evo" class="chart-container"></div>
+        </div>
+        <div class="grid-2" style="margin-bottom:24px;">
+          <div class="section-card"><div id="chart-caja-ben" class="chart-container"></div></div>
+          <div class="section-card"><div id="chart-caja-sal" class="chart-container"></div></div>
+        </div>
+        <div class="section-card">
+          <div id="chart-caja-heat" class="chart-container"></div>
+        </div>
+      </section>
+
+      <!-- ===== COMPARATIVO ===== -->
+      <section x-show="!loading && section==='comparativo'" x-cloak>
+        <h2 class="section-title">Comparativo entre Cajas</h2>
+        <p class="section-subtitle">Análisis comparativo multidimensional de las cajas previsionales.</p>
+
+        <div class="section-card" style="margin-bottom:24px;">
+          <div id="chart-radar" class="chart-container" style="min-height:450px;"></div>
+        </div>
+        <div class="grid-2" style="margin-bottom:24px;">
+          <div class="section-card"><div id="chart-bubble" class="chart-container"></div></div>
+          <div class="section-card"><div id="chart-growth" class="chart-container"></div></div>
+        </div>
+      </section>
+
+      <!-- ===== SOSTENIBILIDAD ===== -->
+      <section x-show="!loading && section==='sostenibilidad'" x-cloak>
+        <h2 class="section-title">Sostenibilidad del Sistema</h2>
+        <p class="section-subtitle">Análisis de la relación activos/pasivos y proyecciones de sostenibilidad.</p>
+
+        <!-- Alert cards -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px;">
+          <template x-for="c in ['IPS','Fiscal','Ande','Bancaria','Cajubi','Ferroviaria','Municipal']" :key="'alert-'+c">
+            <div class="section-card" style="padding:16px;text-align:center;">
+              <div style="font-size:0.8rem;font-weight:600;opacity:0.7;" x-text="c"></div>
+              <div style="font-size:2rem;font-weight:800;margin:6px 0;" :style="'color:'+ratioColor(data.kpis?.por_caja?.[c]?.[selectedYear]?.ratio||0)"
+                   x-text="(data.kpis?.por_caja?.[c]?.[selectedYear]?.ratio||0).toFixed(2)"></div>
+              <span class="ratio-badge" :style="'background:'+ratioColor(data.kpis?.por_caja?.[c]?.[selectedYear]?.ratio||0)+'20;color:'+ratioColor(data.kpis?.por_caja?.[c]?.[selectedYear]?.ratio||0)"
+                    x-text="ratioLabel(data.kpis?.por_caja?.[c]?.[selectedYear]?.ratio||0)"></span>
+            </div>
+          </template>
+        </div>
+
+        <div class="section-card" style="margin-bottom:24px;">
+          <div id="chart-ratio-trend" class="chart-container"></div>
+        </div>
+        <div class="grid-2">
+          <div class="section-card"><div id="chart-ratio-bars" class="chart-container"></div></div>
+          <div class="section-card"><div id="chart-projection" class="chart-container"></div></div>
+        </div>
+      </section>
+
+      <!-- ===== SALARIOS Y APORTES ===== -->
+      <section x-show="!loading && section==='salarios'" x-cloak>
+        <h2 class="section-title">Salarios y Aportes</h2>
+        <p class="section-subtitle">Análisis de la masa salarial, salarios promedio y tasas de contribución.</p>
+
+        <div class="grid-2" style="margin-bottom:24px;">
+          <div class="section-card"><div id="chart-sal-cajas" class="chart-container"></div></div>
+          <div class="section-card"><div id="chart-sal-edad" class="chart-container"></div></div>
+        </div>
+        <div class="grid-2">
+          <div class="section-card"><div id="chart-masa" class="chart-container"></div></div>
+          <div class="section-card"><div id="chart-tasas" class="chart-container"></div></div>
+        </div>
+      </section>
+
+      <!-- ===== EXPLORADOR DE DATOS ===== -->
+      <section x-show="!loading && section==='explorador'" x-cloak>
+        <h2 class="section-title">Explorador de Datos</h2>
+        <p class="section-subtitle">Datos agregados por caja, estado y año. Filtre, ordene y exporte.</p>
+
+        <div class="section-card">
+          <!-- Filters -->
+          <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+            <select x-model="tableFilter.caja" @change="tablePage=0" style="padding:8px 12px;border-radius:8px;border:1px solid;font-size:13px;" :style="darkMode?'background:#0F172A;color:#E2E8F0;border-color:#334155':'background:#fff;border-color:#E2E8F0'">
+              <option value="">Todas las Cajas</option>
+              <template x-for="c in ['IPS','Fiscal','Ande','Bancaria','Cajubi','Ferroviaria','Municipal']"><option :value="c" x-text="c"></option></template>
+            </select>
+            <select x-model="tableFilter.estado" @change="tablePage=0" style="padding:8px 12px;border-radius:8px;border:1px solid;font-size:13px;" :style="darkMode?'background:#0F172A;color:#E2E8F0;border-color:#334155':'background:#fff;border-color:#E2E8F0'">
+              <option value="">Todos los Estados</option>
+              <option value="Activos">Activos</option>
+              <option value="Pasivos">Pasivos</option>
+            </select>
+            <select x-model="tableFilter.ano" @change="tablePage=0" style="padding:8px 12px;border-radius:8px;border:1px solid;font-size:13px;" :style="darkMode?'background:#0F172A;color:#E2E8F0;border-color:#334155':'background:#fff;border-color:#E2E8F0'">
+              <option value="">Todos los Años</option>
+              <template x-for="y in years"><option :value="y" x-text="y"></option></template>
+            </select>
+            <input x-model="tableFilter.search" @input="tablePage=0" placeholder="Buscar..." style="padding:8px 12px;border-radius:8px;border:1px solid;font-size:13px;flex:1;min-width:150px;" :style="darkMode?'background:#0F172A;color:#E2E8F0;border-color:#334155':'background:#fff;border-color:#E2E8F0'">
+            <button @click="exportCSV()" style="padding:8px 16px;border-radius:8px;background:#2563EB;color:white;border:none;cursor:pointer;font-size:13px;font-weight:600;">
+              Exportar CSV
+            </button>
+          </div>
+
+          <div style="font-size:12px;opacity:0.6;margin-bottom:8px;" x-text="tableData.length + ' registros encontrados'"></div>
+
+          <!-- Table -->
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th @click="sortTable('ano')">Año <span x-show="tableSort.col==='ano'" x-text="tableSort.asc?'↑':'↓'"></span></th>
+                  <th @click="sortTable('caja')">Caja <span x-show="tableSort.col==='caja'" x-text="tableSort.asc?'↑':'↓'"></span></th>
+                  <th @click="sortTable('estado')">Estado <span x-show="tableSort.col==='estado'" x-text="tableSort.asc?'↑':'↓'"></span></th>
+                  <th @click="sortTable('cantidad')" class="num">Cantidad <span x-show="tableSort.col==='cantidad'" x-text="tableSort.asc?'↑':'↓'"></span></th>
+                  <th @click="sortTable('salarios')" class="num">Masa Salarial <span x-show="tableSort.col==='salarios'" x-text="tableSort.asc?'↑':'↓'"></span></th>
+                  <th @click="sortTable('aportes')" class="num">Aportes <span x-show="tableSort.col==='aportes'" x-text="tableSort.asc?'↑':'↓'"></span></th>
+                  <th @click="sortTable('salario_promedio')" class="num">Salario Prom. <span x-show="tableSort.col==='salario_promedio'" x-text="tableSort.asc?'↑':'↓'"></span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="row in tablePageData" :key="row.ano+row.caja+row.estado">
+                  <tr>
+                    <td x-text="row.ano"></td>
+                    <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;" :style="'background:'+CAJA_COLORS[row.caja]"></span><span x-text="row.caja"></span></td>
+                    <td x-text="row.estado"></td>
+                    <td class="num" x-text="formatNumber(row.cantidad)"></td>
+                    <td class="num" x-text="formatGs(row.salarios)"></td>
+                    <td class="num" x-text="formatGs(row.aportes)"></td>
+                    <td class="num" x-text="formatGs(row.salario_promedio)"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:13px;">
+            <span x-text="'Página '+(tablePage+1)+' de '+Math.max(1,totalTablePages)"></span>
+            <div style="display:flex;gap:8px;">
+              <button @click="tablePage = Math.max(0, tablePage-1)" :disabled="tablePage===0" style="padding:6px 14px;border-radius:6px;border:1px solid;cursor:pointer;font-size:13px;" :style="darkMode?'background:#1E293B;color:#E2E8F0;border-color:#334155':'background:#fff;border-color:#E2E8F0'">Anterior</button>
+              <button @click="tablePage = Math.min(totalTablePages-1, tablePage+1)" :disabled="tablePage>=totalTablePages-1" style="padding:6px 14px;border-radius:6px;border:1px solid;cursor:pointer;font-size:13px;" :style="darkMode?'background:#1E293B;color:#E2E8F0;border-color:#334155':'background:#fff;border-color:#E2E8F0'">Siguiente</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-grid">
-                <div class="footer-column">
-                    <div class="footer-logo">
-                        <div class="footer-logo-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <div class="footer-logo-text">
-                            <h3>Sistema Previsional de Paraguay</h3>
-                            <p>Dashboard Estadístico Interactivo</p>
-                        </div>
-                    </div>
-                    <p class="footer-description">
-                        Plataforma de visualización de datos del sistema de jubilaciones y pensiones de Paraguay. 
-                        Datos oficiales de las cajas previsionales ANDE, Bancaria e IPS.
-                    </p>
-                </div>
-                <div class="footer-column">
-                    <h4>Recursos</h4>
-                    <ul class="footer-links">
-                        <li><a href="#"><i class="fas fa-file-pdf"></i> Informe Completo</a></li>
-                        <li><a href="#"><i class="fas fa-database"></i> Datos Abiertos</a></li>
-                        <li><a href="#"><i class="fas fa-code"></i> API de Datos</a></li>
-                        <li><a href="#"><i class="fas fa-book"></i> Metodología</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4>Contacto</h4>
-                    <ul class="footer-links">
-                        <li><a href="#"><i class="fas fa-envelope"></i> datos@hacienda.gov.py</a></li>
-                        <li><a href="#"><i class="fas fa-phone"></i> (021) 414-1000</a></li>
-                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> Asunción, Paraguay</a></li>
-                        <li><a href="#"><i class="fab fa-github"></i> Repositorio GitHub</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>© 2024 Dirección de Estudios Económicos - Ministerio de Hacienda de Paraguay</p>
-                <p>Los datos presentados son de carácter oficial y han sido validados por las instituciones correspondientes.</p>
-            </div>
-        </div>
+    <footer style="text-align:center;padding:32px;opacity:0.5;font-size:12px;">
+      <p>Ministerio de Trabajo, Empleo y Seguridad Social (MTESS) - Dirección General de Estadísticas y Seguridad Social</p>
+      <p>Datos actualizados al cierre de diciembre de cada año. Fuente: Registros administrativos de las cajas previsionales.</p>
     </footer>
+  </div>
 
-    <script>
-        // Sistema de pestañas
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                // Remover clase active de todas las pestañas
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                // Agregar clase active a la pestaña clickeada
-                this.classList.add('active');
-                
-                // Mostrar el contenido correspondiente
-                const tabId = this.getAttribute('data-tab');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-
-        // Función para formatear números
-        function formatNumber(num) {
-            return new Intl.NumberFormat('es-PY').format(num);
-        }
-
-        // Datos para gráficos
-        const years = [2020, 2021, 2022, 2023, 2024];
-        
-        // Datos por caja
-        const data = {
-            ANDE: {
-                activos: [7200, 7520, 7800, 8100, 8400],
-                pasivos: [2100, 2150, 2200, 2250, 2300],
-                salario: [6500000, 7000000, 7500000, 8000000, 8500000]
-            },
-            Bancaria: {
-                activos: [5500, 5893, 6200, 6500, 6800],
-                pasivos: [1750, 1842, 1900, 1950, 2000],
-                salario: [8000000, 8500000, 9000000, 9500000, 10000000]
-            },
-            IPS: {
-                activos: [3800, 4000, 4200, 4400, 4600],
-                pasivos: [1200, 1276, 1350, 1400, 1450],
-                salario: [5000000, 5500000, 6000000, 6500000, 7000000]
-            }
-        };
-
-        // Gráfico de distribución del sistema (Resumen 1)
-        const chartResumen1 = {
-            data: [{
-                values: [7520, 5893, 4000],
-                labels: ['ANDE', 'Caja Bancaria', 'IPS'],
-                type: 'pie',
-                hole: 0.4,
-                marker: {
-                    colors: [varColors.ANDE, varColors.Bancaria, varColors.IPS]
-                },
-                textinfo: 'label+percent',
-                hoverinfo: 'label+value+percent',
-                textposition: 'outside'
-            }],
-            layout: {
-                height: 280,
-                margin: { t: 20, b: 20, l: 20, r: 20 },
-                showlegend: false,
-                paper_bgcolor: 'transparent',
-                plot_bgcolor: 'transparent'
-            }
-        };
-
-        // Configuración común para gráficos
-        const config = {
-            responsive: true,
-            displayModeBar: true,
-            displaylogo: false,
-            modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d']
-        };
-
-        // Colores
-        const varColors = {
-            ANDE: '#2563EB',
-            Bancaria: '#10B981',
-            IPS: '#8b5cf6'
-        };
-
-        // Inicializar gráficos cuando se cargue la página
-        document.addEventListener('DOMContentLoaded', function() {
-            // Gráfico de Resumen 1
-            Plotly.newPlot('chartResumen1', [{
-                values: [7520, 5893, 4000],
-                labels: ['ANDE', 'Caja Bancaria', 'IPS'],
-                type: 'pie',
-                hole: 0.4,
-                marker: {
-                    colors: [varColors.ANDE, varColors.Bancaria, varColors.IPS]
-                },
-                textinfo: 'label+percent',
-                hoverinfo: 'label+value+percent',
-                textposition: 'outside'
-            }], {
-                height: 280,
-                margin: { t: 20, b: 20, l: 20, r: 20 },
-                showlegend: false,
-                paper_bgcolor: 'transparent',
-                plot_bgcolor: 'transparent'
-            }, config);
-
-            // Gráfico de Resumen 2
-            Plotly.newPlot('chartResumen2', [{
-                x: years,
-                y: data.ANDE.activos,
-                name: 'ANDE',
-                type: 'scatter',
-                mode: 'lines+markers',
-                line: { color: varColors.ANDE, width: 3 },
-                marker: { size: 8 }
-            }, {
-                x: years,
-                y: data.Bancaria.activos,
-                name: 'Caja Bancaria',
-                type: 'scatter',
-                mode: 'lines+markers',
-                line: { color: varColors.Bancaria, width: 3 },
-                marker: { size: 8 }
-            }, {
-                x: years,
-                y: data.IPS.activos,
-                name: 'IPS',
-                type: 'scatter',
-                mode: 'lines+markers',
-                line: { color: varColors.IPS, width: 3 },
-                marker: { size: 8 }
-            }], {
-                height: 280,
-                margin: { t: 30, b: 40, l: 50, r: 30 },
-                xaxis: {
-                    title: 'Año',
-                    tickmode: 'array',
-                    tickvals: years
-                },
-                yaxis: {
-                    title: 'Afiliados Activos',
-                    tickformat: ',d'
-                },
-                paper_bgcolor: 'transparent',
-                plot_bgcolor: 'transparent',
-                legend: {
-                    orientation: 'h',
-                    y: -0.2
-                }
-            }, config);
-
-            // Gráfico de ANDE 1
-            Plotly.newPlot('chartAnde1', [{
-                x: [150, 320, 450, 520, 480, 420, 380, 350, 320, 280, 240, 200, 160, 120, 80],
-                y: ['15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80-84', '85+'],
-                name: 'Hombres',
-                type: 'bar',
-                orientation: 'h',
-                marker: { color: varColors.ANDE }
-            }, {
-                x: [120, 280, 380, 450, 420, 380, 350, 320, 280, 240, 200, 160, 120, 80, 40],
-                y: ['15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80-84', '85+'],
-                name: 'Mujeres',
-                type: 'bar',
-                orientation: 'h',
-                marker: { color: '#7C3AED' }
-            }], {
-                height: 280,
-                margin: { t: 30, b: 40, l: 80, r: 30 },
-                xaxis: { title: 'Cantidad de Afiliados' },
-                yaxis: { title: 'Grupo de Edad' },
-                barmode: 'overlay',
-                paper_bgcolor: 'transparent',
-                plot_bgcolor: 'transparent',
-                legend: {
-                    orientation: 'h',
-                    y: -0.2
-                }
-            }, config);
-
-            // Gráfico de comparativa 1
-            Plotly.newPlot('chartComparativa1', [{
-                x: ['ANDE', 'Caja Bancaria', 'IPS'],
-                y: [7520, 5893, 4000],
-                type: 'bar',
-                marker: {
-                    color: [varColors.ANDE, varColors.Bancaria, varColors.IPS]
-                },
-                text: ['7,520', '5,893', '4,000'],
-                textposition: 'auto'
-            }], {
-                height: 280,
-                margin: { t: 30, b: 40, l: 50, r: 30 },
-                xaxis: { title: 'Caja Previsional' },
-                yaxis: { title: 'Afiliados Activos' },
-                paper_bgcolor: 'transparent',
-                plot_bgcolor: 'transparent'
-            }, config);
-
-            // Gráfico de comparativa 2 (Ratios)
-            Plotly.newPlot('chartComparativa2', [{
-                x: years,
-                y: [3.6, 3.5, 3.55, 3.6, 3.65],
-                name: 'ANDE',
-                type: 'scatter',
-                mode: 'lines+markers',
-                line: { color: varColors.ANDE, width: 3 },
-                marker: { size: 8 }
-            }, {
-                x: years,
-                y: [3.3, 3.2, 3.25, 3.3, 3.35],
-                name: 'Caja Bancaria',
-                type: 'scatter',
-                mode: 'lines+markers',
-                line: { color: varColors.Bancaria, width: 3 },
-                marker: { size: 8 }
-            }, {
-                x: years,
-                y: [3.2, 3.14, 3.1, 3.15, 3.2],
-                name: 'IPS',
-                type: 'scatter',
-                mode: 'lines+markers',
-                line: { color: varColors.IPS, width: 3 },
-                marker: { size: 8 },
-                dash: 'dash'
-            }, {
-                x: years,
-                y: Array(5).fill(2.0),
-                name: 'Límite Crítico',
-                type: 'scatter',
-                mode: 'lines',
-                line: { color: '#DC2626', width: 2, dash: 'dash' },
-                showlegend: false
-            }], {
-                height: 280,
-                margin: { t: 30, b: 40, l: 50, r: 30 },
-                xaxis: {
-                    title: 'Año',
-                    tickmode: 'array',
-                    tickvals: years
-                },
-                yaxis: {
-                    title: 'Ratio Activos/Pasivos',
-                    range: [1.5, 4]
-                },
-                paper_bgcolor: 'transparent',
-                plot_bgcolor: 'transparent',
-                legend: {
-                    orientation: 'h',
-                    y: -0.2
-                },
-                shapes: [{
-                    type: 'line',
-                    x0: 2020,
-                    x1: 2024,
-                    y0: 2.0,
-                    y1: 2.0,
-                    line: {
-                        color: '#DC2626',
-                        width: 2,
-                        dash: 'dash'
-                    }
-                }]
-            }, config);
-        });
-
-        // Filtro de año
-        document.getElementById('yearFilter').addEventListener('change', function() {
-            const selectedYear = this.value;
-            
-            // Actualizar estadísticas principales según el año seleccionado
-            const yearIndex = years.indexOf(parseInt(selectedYear));
-            
-            if (yearIndex !== -1) {
-                // Actualizar valores de las tarjetas (simulado)
-                const totalActivos = data.ANDE.activos[yearIndex] + data.Bancaria.activos[yearIndex] + data.IPS.activos[yearIndex];
-                const totalPasivos = data.ANDE.pasivos[yearIndex] + data.Bancaria.pasivos[yearIndex] + data.IPS.pasivos[yearIndex];
-                const ratio = (totalActivos / totalPasivos).toFixed(2);
-                
-                // Actualizar UI (ejemplo)
-                document.querySelectorAll('.stat-card .value')[0].textContent = formatNumber(totalActivos);
-                document.querySelectorAll('.stat-card .value')[1].textContent = formatNumber(totalPasivos);
-                document.querySelectorAll('.stat-card .value')[2].textContent = ratio;
-                
-                // Mostrar notificación
-                showNotification(`Datos actualizados para el año ${selectedYear}`);
-            }
-        });
-
-        // Función para mostrar notificaciones
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #10B981;
-                color: white;
-                padding: 1rem 1.5rem;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                z-index: 1000;
-                font-weight: 600;
-                animation: slideIn 0.3s ease;
-            `;
-            
-            notification.innerHTML = `
-                <i class="fas fa-check-circle"></i>
-                ${message}
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-
-        // Añadir estilos de animación para notificaciones
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
+  <script src="js/utils.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
