@@ -1,0 +1,596 @@
+[
+  {
+    "ano": 2020,
+    "caja": "Ande",
+    "estado": "Activos",
+    "cantidad": 4155,
+    "salarios": 48863248254,
+    "aportes": 4886324825,
+    "salario_promedio": 11760108
+  },
+  {
+    "ano": 2020,
+    "caja": "Ande",
+    "estado": "Pasivos",
+    "cantidad": 2216,
+    "salarios": 14476012246,
+    "aportes": 0,
+    "salario_promedio": 6532497
+  },
+  {
+    "ano": 2020,
+    "caja": "Bancaria",
+    "estado": "Activos",
+    "cantidad": 12250,
+    "salarios": 111383337786,
+    "aportes": 31187334580,
+    "salario_promedio": 9092517
+  },
+  {
+    "ano": 2020,
+    "caja": "Bancaria",
+    "estado": "Pasivos",
+    "cantidad": 2878,
+    "salarios": 23378678182,
+    "aportes": 0,
+    "salario_promedio": 8123238
+  },
+  {
+    "ano": 2020,
+    "caja": "Cajubi",
+    "estado": "Activos",
+    "cantidad": 1535,
+    "salarios": 36106606231,
+    "aportes": 7582387309,
+    "salario_promedio": 23522219
+  },
+  {
+    "ano": 2020,
+    "caja": "Cajubi",
+    "estado": "Pasivos",
+    "cantidad": 2056,
+    "salarios": 36626971172,
+    "aportes": 0,
+    "salario_promedio": 17814675
+  },
+  {
+    "ano": 2020,
+    "caja": "Ferroviaria",
+    "estado": "Activos",
+    "cantidad": 4,
+    "salarios": 33634590,
+    "aportes": 6726918,
+    "salario_promedio": 8408648
+  },
+  {
+    "ano": 2020,
+    "caja": "Ferroviaria",
+    "estado": "Pasivos",
+    "cantidad": 373,
+    "salarios": 728341800,
+    "aportes": 0,
+    "salario_promedio": 1952659
+  },
+  {
+    "ano": 2020,
+    "caja": "Fiscal",
+    "estado": "Activos",
+    "cantidad": 212950,
+    "salarios": 1173839994112,
+    "aportes": 187814399058,
+    "salario_promedio": 5512280
+  },
+  {
+    "ano": 2020,
+    "caja": "Fiscal",
+    "estado": "Pasivos",
+    "cantidad": 67502,
+    "salarios": 283733295002,
+    "aportes": 0,
+    "salario_promedio": 4203332
+  },
+  {
+    "ano": 2020,
+    "caja": "IPS",
+    "estado": "Activos",
+    "cantidad": 557564,
+    "salarios": 1969594169635,
+    "aportes": 246199271193,
+    "salario_promedio": 3532499
+  },
+  {
+    "ano": 2020,
+    "caja": "IPS",
+    "estado": "Pasivos",
+    "cantidad": 61962,
+    "salarios": 221025503110,
+    "aportes": 0,
+    "salario_promedio": 3567114
+  },
+  {
+    "ano": 2020,
+    "caja": "Municipal",
+    "estado": "Activos",
+    "cantidad": 7611,
+    "salarios": 25728540813,
+    "aportes": 5145708163,
+    "salario_promedio": 3380442
+  },
+  {
+    "ano": 2020,
+    "caja": "Municipal",
+    "estado": "Pasivos",
+    "cantidad": 2062,
+    "salarios": 5798467497,
+    "aportes": 0,
+    "salario_promedio": 2812060
+  },
+  {
+    "ano": 2021,
+    "caja": "Ande",
+    "estado": "Activos",
+    "cantidad": 4920,
+    "salarios": 57330316688,
+    "aportes": 5733031669,
+    "salario_promedio": 11652503
+  },
+  {
+    "ano": 2021,
+    "caja": "Ande",
+    "estado": "Pasivos",
+    "cantidad": 2278,
+    "salarios": 15726078402,
+    "aportes": 0,
+    "salario_promedio": 6903458
+  },
+  {
+    "ano": 2021,
+    "caja": "Bancaria",
+    "estado": "Activos",
+    "cantidad": 12492,
+    "salarios": 120156669238,
+    "aportes": 33643867387,
+    "salario_promedio": 9618690
+  },
+  {
+    "ano": 2021,
+    "caja": "Bancaria",
+    "estado": "Pasivos",
+    "cantidad": 2990,
+    "salarios": 25479053116,
+    "aportes": 0,
+    "salario_promedio": 8521422
+  },
+  {
+    "ano": 2021,
+    "caja": "Cajubi",
+    "estado": "Activos",
+    "cantidad": 1432,
+    "salarios": 35999582222,
+    "aportes": 7559912267,
+    "salario_promedio": 25139373
+  },
+  {
+    "ano": 2021,
+    "caja": "Cajubi",
+    "estado": "Pasivos",
+    "cantidad": 2151,
+    "salarios": 39449538533,
+    "aportes": 0,
+    "salario_promedio": 18340092
+  },
+  {
+    "ano": 2021,
+    "caja": "Ferroviaria",
+    "estado": "Activos",
+    "cantidad": 4,
+    "salarios": 33634590,
+    "aportes": 6726918,
+    "salario_promedio": 8408648
+  },
+  {
+    "ano": 2021,
+    "caja": "Ferroviaria",
+    "estado": "Pasivos",
+    "cantidad": 373,
+    "salarios": 728341800,
+    "aportes": 0,
+    "salario_promedio": 1952659
+  },
+  {
+    "ano": 2021,
+    "caja": "Fiscal",
+    "estado": "Activos",
+    "cantidad": 214882,
+    "salarios": 1220407679439,
+    "aportes": 195265228710,
+    "salario_promedio": 5679432
+  },
+  {
+    "ano": 2021,
+    "caja": "Fiscal",
+    "estado": "Pasivos",
+    "cantidad": 67799,
+    "salarios": 295779456102,
+    "aportes": 0,
+    "salario_promedio": 4362593
+  },
+  {
+    "ano": 2021,
+    "caja": "IPS",
+    "estado": "Activos",
+    "cantidad": 608074,
+    "salarios": 2248084630593,
+    "aportes": 281010578816,
+    "salario_promedio": 3697058
+  },
+  {
+    "ano": 2021,
+    "caja": "IPS",
+    "estado": "Pasivos",
+    "cantidad": 64236,
+    "salarios": 238303785549,
+    "aportes": 0,
+    "salario_promedio": 3709817
+  },
+  {
+    "ano": 2021,
+    "caja": "Municipal",
+    "estado": "Pasivos",
+    "cantidad": 2154,
+    "salarios": 6268864253,
+    "aportes": 0,
+    "salario_promedio": 2910336
+  },
+  {
+    "ano": 2022,
+    "caja": "Ande",
+    "estado": "Activos",
+    "cantidad": 4887,
+    "salarios": 61250780992,
+    "aportes": 6125078099,
+    "salario_promedio": 12533411
+  },
+  {
+    "ano": 2022,
+    "caja": "Ande",
+    "estado": "Pasivos",
+    "cantidad": 2458,
+    "salarios": 18241476314,
+    "aportes": 0,
+    "salario_promedio": 7421268
+  },
+  {
+    "ano": 2022,
+    "caja": "Bancaria",
+    "estado": "Activos",
+    "cantidad": 12522,
+    "salarios": 127464491174,
+    "aportes": 35690057529,
+    "salario_promedio": 10179244
+  },
+  {
+    "ano": 2022,
+    "caja": "Bancaria",
+    "estado": "Pasivos",
+    "cantidad": 2740,
+    "salarios": 18584834791,
+    "aportes": 0,
+    "salario_promedio": 6782786
+  },
+  {
+    "ano": 2022,
+    "caja": "Cajubi",
+    "estado": "Pasivos",
+    "cantidad": 2205,
+    "salarios": 45616204970,
+    "aportes": 0,
+    "salario_promedio": 20687621
+  },
+  {
+    "ano": 2022,
+    "caja": "Ferroviaria",
+    "estado": "Activos",
+    "cantidad": 4,
+    "salarios": 33634590,
+    "aportes": 6726918,
+    "salario_promedio": 8408648
+  },
+  {
+    "ano": 2022,
+    "caja": "Ferroviaria",
+    "estado": "Pasivos",
+    "cantidad": 373,
+    "salarios": 728341800,
+    "aportes": 0,
+    "salario_promedio": 1952659
+  },
+  {
+    "ano": 2022,
+    "caja": "Fiscal",
+    "estado": "Activos",
+    "cantidad": 219043,
+    "salarios": 1295713354349,
+    "aportes": 207314136696,
+    "salario_promedio": 5915338
+  },
+  {
+    "ano": 2022,
+    "caja": "Fiscal",
+    "estado": "Pasivos",
+    "cantidad": 70628,
+    "salarios": 333219134993,
+    "aportes": 0,
+    "salario_promedio": 4717947
+  },
+  {
+    "ano": 2022,
+    "caja": "IPS",
+    "estado": "Activos",
+    "cantidad": 699728,
+    "salarios": 2771223585797,
+    "aportes": 346402948223,
+    "salario_promedio": 3960430
+  },
+  {
+    "ano": 2022,
+    "caja": "IPS",
+    "estado": "Pasivos",
+    "cantidad": 69669,
+    "salarios": 276010672698,
+    "aportes": 0,
+    "salario_promedio": 3961743
+  },
+  {
+    "ano": 2022,
+    "caja": "Municipal",
+    "estado": "Pasivos",
+    "cantidad": 2300,
+    "salarios": 6917204694,
+    "aportes": 0,
+    "salario_promedio": 3007480
+  },
+  {
+    "ano": 2023,
+    "caja": "Ande",
+    "estado": "Activos",
+    "cantidad": 4970,
+    "salarios": 66033179316,
+    "aportes": 6603317932,
+    "salario_promedio": 13286354
+  },
+  {
+    "ano": 2023,
+    "caja": "Ande",
+    "estado": "Pasivos",
+    "cantidad": 2556,
+    "salarios": 21073705568,
+    "aportes": 0,
+    "salario_promedio": 8244799
+  },
+  {
+    "ano": 2023,
+    "caja": "Bancaria",
+    "estado": "Activos",
+    "cantidad": 12928,
+    "salarios": 139461082772,
+    "aportes": 39049103176,
+    "salario_promedio": 10787522
+  },
+  {
+    "ano": 2023,
+    "caja": "Bancaria",
+    "estado": "Pasivos",
+    "cantidad": 3104,
+    "salarios": 32650047064,
+    "aportes": 0,
+    "salario_promedio": 10518701
+  },
+  {
+    "ano": 2023,
+    "caja": "Cajubi",
+    "estado": "Activos",
+    "cantidad": 1627,
+    "salarios": 44517899581,
+    "aportes": 9348758912,
+    "salario_promedio": 27361954
+  },
+  {
+    "ano": 2023,
+    "caja": "Cajubi",
+    "estado": "Pasivos",
+    "cantidad": 2761,
+    "salarios": 50149417199,
+    "aportes": 0,
+    "salario_promedio": 18163498
+  },
+  {
+    "ano": 2023,
+    "caja": "Ferroviaria",
+    "estado": "Activos",
+    "cantidad": 3,
+    "salarios": 41103070,
+    "aportes": 8220614,
+    "salario_promedio": 13701023
+  },
+  {
+    "ano": 2023,
+    "caja": "Ferroviaria",
+    "estado": "Pasivos",
+    "cantidad": 321,
+    "salarios": 718562800,
+    "aportes": 0,
+    "salario_promedio": 2238513
+  },
+  {
+    "ano": 2023,
+    "caja": "Fiscal",
+    "estado": "Activos",
+    "cantidad": 220197,
+    "salarios": 1442850469752,
+    "aportes": 230856075160,
+    "salario_promedio": 6552544
+  },
+  {
+    "ano": 2023,
+    "caja": "Fiscal",
+    "estado": "Pasivos",
+    "cantidad": 74339,
+    "salarios": 386873440468,
+    "aportes": 0,
+    "salario_promedio": 5204179
+  },
+  {
+    "ano": 2023,
+    "caja": "IPS",
+    "estado": "Activos",
+    "cantidad": 726972,
+    "salarios": 3037663959679,
+    "aportes": 379707994935,
+    "salario_promedio": 4178516
+  },
+  {
+    "ano": 2023,
+    "caja": "IPS",
+    "estado": "Pasivos",
+    "cantidad": 76105,
+    "salarios": 325688563711,
+    "aportes": 0,
+    "salario_promedio": 4279463
+  },
+  {
+    "ano": 2023,
+    "caja": "Municipal",
+    "estado": "Activos",
+    "cantidad": 5862,
+    "salarios": 25609843499,
+    "aportes": 5121968700,
+    "salario_promedio": 4368789
+  },
+  {
+    "ano": 2023,
+    "caja": "Municipal",
+    "estado": "Pasivos",
+    "cantidad": 2430,
+    "salarios": 7406077469,
+    "aportes": 0,
+    "salario_promedio": 3047769
+  },
+  {
+    "ano": 2024,
+    "caja": "Ande",
+    "estado": "Activos",
+    "cantidad": 4867,
+    "salarios": 67820226897,
+    "aportes": 6782022690,
+    "salario_promedio": 13934709
+  },
+  {
+    "ano": 2024,
+    "caja": "Ande",
+    "estado": "Pasivos",
+    "cantidad": 2668,
+    "salarios": 23448208946,
+    "aportes": 0,
+    "salario_promedio": 8788684
+  },
+  {
+    "ano": 2024,
+    "caja": "Bancaria",
+    "estado": "Activos",
+    "cantidad": 12612,
+    "salarios": 144801544976,
+    "aportes": 40544432593,
+    "salario_promedio": 11481252
+  },
+  {
+    "ano": 2024,
+    "caja": "Bancaria",
+    "estado": "Pasivos",
+    "cantidad": 3147,
+    "salarios": 35382303011,
+    "aportes": 0,
+    "salario_promedio": 11243185
+  },
+  {
+    "ano": 2024,
+    "caja": "Cajubi",
+    "estado": "Activos",
+    "cantidad": 1573,
+    "salarios": 45909491133,
+    "aportes": 9640993138,
+    "salario_promedio": 29185945
+  },
+  {
+    "ano": 2024,
+    "caja": "Cajubi",
+    "estado": "Pasivos",
+    "cantidad": 2329,
+    "salarios": 53720990319,
+    "aportes": 0,
+    "salario_promedio": 23066119
+  },
+  {
+    "ano": 2024,
+    "caja": "Ferroviaria",
+    "estado": "Activos",
+    "cantidad": 3,
+    "salarios": 41103070,
+    "aportes": 8220614,
+    "salario_promedio": 13701023
+  },
+  {
+    "ano": 2024,
+    "caja": "Ferroviaria",
+    "estado": "Pasivos",
+    "cantidad": 279,
+    "salarios": 828186100,
+    "aportes": 0,
+    "salario_promedio": 2968409
+  },
+  {
+    "ano": 2024,
+    "caja": "Fiscal",
+    "estado": "Activos",
+    "cantidad": 222795,
+    "salarios": 1526140789495,
+    "aportes": 244182526319,
+    "salario_promedio": 6849978
+  },
+  {
+    "ano": 2024,
+    "caja": "Fiscal",
+    "estado": "Pasivos",
+    "cantidad": 78967,
+    "salarios": 435855848905,
+    "aportes": 0,
+    "salario_promedio": 5519468
+  },
+  {
+    "ano": 2024,
+    "caja": "IPS",
+    "estado": "Activos",
+    "cantidad": 799664,
+    "salarios": 3410271394408,
+    "aportes": 426283924301,
+    "salario_promedio": 4264630
+  },
+  {
+    "ano": 2024,
+    "caja": "IPS",
+    "estado": "Pasivos",
+    "cantidad": 90280,
+    "salarios": 402057097012,
+    "aportes": 0,
+    "salario_promedio": 4453446
+  },
+  {
+    "ano": 2024,
+    "caja": "Municipal",
+    "estado": "Pasivos",
+    "cantidad": 2521,
+    "salarios": 7755841080,
+    "aportes": 0,
+    "salario_promedio": 3076494
+  }
+]

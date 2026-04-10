@@ -1,0 +1,58 @@
+[
+  {
+    "caja": "IPS",
+    "caja_largo": "Instituto de Previsión Social",
+    "tasa_empleado": 9.0,
+    "tasa_empleador": 14.0,
+    "tasa_estado": 1.5,
+    "tasa_total": 24.5
+  },
+  {
+    "caja": "Fiscal",
+    "caja_largo": "Caja Fiscal (Ministerio de Hacienda)",
+    "tasa_empleado": 14.0,
+    "tasa_empleador": 14.0,
+    "tasa_estado": 2.0,
+    "tasa_total": 30.0
+  },
+  {
+    "caja": "Ande",
+    "caja_largo": "Caja de Jubilaciones y Pensiones de la ANDE",
+    "tasa_empleado": 14.0,
+    "tasa_empleador": 17.0,
+    "tasa_estado": 0,
+    "tasa_total": 31.0
+  },
+  {
+    "caja": "Bancaria",
+    "caja_largo": "Caja de Jubilaciones y Pensiones del Personal Bancario",
+    "tasa_empleado": 12.0,
+    "tasa_empleador": 14.0,
+    "tasa_estado": 0,
+    "tasa_total": 26.0
+  },
+  {
+    "caja": "Cajubi",
+    "caja_largo": "Caja de Jubilaciones y Pensiones del Personal de ITAIPU",
+    "tasa_empleado": 15.0,
+    "tasa_empleador": 15.0,
+    "tasa_estado": 0,
+    "tasa_total": 30.0
+  },
+  {
+    "caja": "Ferroviaria",
+    "caja_largo": "Caja de Jubilaciones y Pensiones Ferroviaria",
+    "tasa_empleado": 14.0,
+    "tasa_empleador": 14.0,
+    "tasa_estado": 0,
+    "tasa_total": 28.0
+  },
+  {
+    "caja": "Municipal",
+    "caja_largo": "Caja de Jubilaciones y Pensiones Municipal",
+    "tasa_empleado": 14.0,
+    "tasa_empleador": 14.0,
+    "tasa_estado": 2.0,
+    "tasa_total": 30.0
+  }
+]

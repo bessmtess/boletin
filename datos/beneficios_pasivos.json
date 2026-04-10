@@ -1,0 +1,938 @@
+[
+  {
+    "ano": 2020,
+    "caja": "Ande",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 40,
+    "salarios": 155310592,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Ande",
+    "tipo_beneficio": "Otros",
+    "cantidad": 28,
+    "salarios": 228398937,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Ande",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 585,
+    "salarios": 1691692563,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Ande",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1563,
+    "salarios": 12400610154,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 62,
+    "salarios": 432950921,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Otros",
+    "cantidad": 437,
+    "salarios": 3407875295,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 712,
+    "salarios": 3468286058,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1667,
+    "salarios": 16069565908,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 63,
+    "salarios": 1132745269,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 386,
+    "salarios": 3431630078,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1607,
+    "salarios": 32062595825,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Ferroviaria",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 213,
+    "salarios": 410543000,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Ferroviaria",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 160,
+    "salarios": 317798800,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 976,
+    "salarios": 2990161002,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Otros",
+    "cantidad": 33,
+    "salarios": 56943004,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 3380,
+    "salarios": 11225119945,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 63113,
+    "salarios": 269461071051,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "IPS",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 3656,
+    "salarios": 7155950157,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "IPS",
+    "tipo_beneficio": "Otros",
+    "cantidad": 441,
+    "salarios": 1299610697,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "IPS",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 13136,
+    "salarios": 20738672466,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "IPS",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 44729,
+    "salarios": 191831269790,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Municipal",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 537,
+    "salarios": 1077308291,
+    "aportes": 0
+  },
+  {
+    "ano": 2020,
+    "caja": "Municipal",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1525,
+    "salarios": 4721159206,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Ande",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 40,
+    "salarios": 167569877,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Ande",
+    "tipo_beneficio": "Otros",
+    "cantidad": 26,
+    "salarios": 222329856,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Ande",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 596,
+    "salarios": 1905563093,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Ande",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1616,
+    "salarios": 13430615576,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 62,
+    "salarios": 433131032,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Otros",
+    "cantidad": 433,
+    "salarios": 3415077435,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 727,
+    "salarios": 3635488936,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1768,
+    "salarios": 17995355712,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 58,
+    "salarios": 1059631770,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 449,
+    "salarios": 4195745718,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1644,
+    "salarios": 34194161045,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Ferroviaria",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 213,
+    "salarios": 410543000,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Ferroviaria",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 160,
+    "salarios": 317798800,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 1092,
+    "salarios": 3549438160,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Otros",
+    "cantidad": 34,
+    "salarios": 62607865,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 3244,
+    "salarios": 10867584052,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 63429,
+    "salarios": 281299826025,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "IPS",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 3480,
+    "salarios": 6954558879,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "IPS",
+    "tipo_beneficio": "Otros",
+    "cantidad": 535,
+    "salarios": 2409022182,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "IPS",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 13589,
+    "salarios": 22485561393,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "IPS",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 46632,
+    "salarios": 206454643095,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Municipal",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 556,
+    "salarios": 1139346894,
+    "aportes": 0
+  },
+  {
+    "ano": 2021,
+    "caja": "Municipal",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1598,
+    "salarios": 5129517359,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Ande",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 48,
+    "salarios": 230351459,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Ande",
+    "tipo_beneficio": "Otros",
+    "cantidad": 25,
+    "salarios": 234586798,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Ande",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 689,
+    "salarios": 2481028410,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Ande",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1696,
+    "salarios": 15295509647,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 65,
+    "salarios": 342428900,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Otros",
+    "cantidad": 453,
+    "salarios": 3279626808,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 676,
+    "salarios": 2936154921,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1546,
+    "salarios": 12026624162,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 57,
+    "salarios": 1160962137,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Otros",
+    "cantidad": 6,
+    "salarios": 172736632,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 466,
+    "salarios": 4984199419,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1676,
+    "salarios": 39298306782,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Ferroviaria",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 213,
+    "salarios": 410543000,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Ferroviaria",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 160,
+    "salarios": 317798800,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 960,
+    "salarios": 3200064209,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Otros",
+    "cantidad": 38,
+    "salarios": 63459334,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 3379,
+    "salarios": 11648088407,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 66251,
+    "salarios": 318307523043,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "IPS",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 3676,
+    "salarios": 7756791696,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "IPS",
+    "tipo_beneficio": "Otros",
+    "cantidad": 541,
+    "salarios": 1881058834,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "IPS",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 15330,
+    "salarios": 27565495315,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "IPS",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 50122,
+    "salarios": 238807326853,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Municipal",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 597,
+    "salarios": 1241079884,
+    "aportes": 0
+  },
+  {
+    "ano": 2022,
+    "caja": "Municipal",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1703,
+    "salarios": 5676124810,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Ande",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 48,
+    "salarios": 245413131,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Ande",
+    "tipo_beneficio": "Otros",
+    "cantidad": 24,
+    "salarios": 248752543,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Ande",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 689,
+    "salarios": 2761151914,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Ande",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1795,
+    "salarios": 17818387980,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 60,
+    "salarios": 516100180,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Otros",
+    "cantidad": 415,
+    "salarios": 3845130745,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 748,
+    "salarios": 4476412612,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1881,
+    "salarios": 23812403527,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 55,
+    "salarios": 1136170641,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 968,
+    "salarios": 5422074930,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1738,
+    "salarios": 43591171628,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Ferroviaria",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 196,
+    "salarios": 432629000,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Ferroviaria",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 125,
+    "salarios": 285933800,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 1020,
+    "salarios": 3718221496,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Otros",
+    "cantidad": 40,
+    "salarios": 70857181,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 3634,
+    "salarios": 12822280380,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 69645,
+    "salarios": 370262081411,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "IPS",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 3830,
+    "salarios": 8714965808,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "IPS",
+    "tipo_beneficio": "Otros",
+    "cantidad": 663,
+    "salarios": 2851548526,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "IPS",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 16619,
+    "salarios": 32972721523,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "IPS",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 54993,
+    "salarios": 281149327854,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Municipal",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 620,
+    "salarios": 1286599170,
+    "aportes": 0
+  },
+  {
+    "ano": 2023,
+    "caja": "Municipal",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1810,
+    "salarios": 6119478299,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Ande",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 50,
+    "salarios": 259947110,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Ande",
+    "tipo_beneficio": "Otros",
+    "cantidad": 24,
+    "salarios": 257956390,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Ande",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 700,
+    "salarios": 3003666668,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Ande",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1894,
+    "salarios": 19926638778,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 60,
+    "salarios": 554603147,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Otros",
+    "cantidad": 413,
+    "salarios": 3946664778,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 738,
+    "salarios": 4716042119,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Bancaria",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1936,
+    "salarios": 26164992967,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 53,
+    "salarios": 1102635375,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Otros",
+    "cantidad": 3,
+    "salarios": 74176620,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 524,
+    "salarios": 6233037393,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Cajubi",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1749,
+    "salarios": 46311140931,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Ferroviaria",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 183,
+    "salarios": 537226500,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Ferroviaria",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 96,
+    "salarios": 290959600,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 880,
+    "salarios": 3392745440,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Otros",
+    "cantidad": 54,
+    "salarios": 150874512,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 12108,
+    "salarios": 38861459422,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Fiscal",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 65925,
+    "salarios": 393450769531,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "IPS",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 4949,
+    "salarios": 11143181070,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "IPS",
+    "tipo_beneficio": "Otros",
+    "cantidad": 884,
+    "salarios": 2518060234,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "IPS",
+    "tipo_beneficio": "Pensión/Sobrevivencia",
+    "cantidad": 19602,
+    "salarios": 42801413865,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "IPS",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 64845,
+    "salarios": 345594441843,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Municipal",
+    "tipo_beneficio": "Invalidez",
+    "cantidad": 629,
+    "salarios": 1295023397,
+    "aportes": 0
+  },
+  {
+    "ano": 2024,
+    "caja": "Municipal",
+    "tipo_beneficio": "Vejez",
+    "cantidad": 1892,
+    "salarios": 6460817683,
+    "aportes": 0
+  }
+]

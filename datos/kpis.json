@@ -1,0 +1,352 @@
+{
+  "global": {
+    "2020": {
+      "total_activos": 796069,
+      "total_pasivos": 139049,
+      "ratio": 5.73,
+      "masa_salarial": 3951316800430,
+      "masa_aportes": 482822152046,
+      "sml": 2192839
+    },
+    "2021": {
+      "total_activos": 841804,
+      "total_pasivos": 141981,
+      "ratio": 5.93,
+      "masa_salarial": 4303747630525,
+      "masa_aportes": 523219345766,
+      "sml": 2289324,
+      "total_activos_cambio_pct": 5.7,
+      "total_pasivos_cambio_pct": 2.1,
+      "masa_salarial_cambio_pct": 8.9
+    },
+    "2022": {
+      "total_activos": 936184,
+      "total_pasivos": 150373,
+      "ratio": 6.23,
+      "masa_salarial": 4955003717162,
+      "masa_aportes": 595538947465,
+      "sml": 2550307,
+      "total_activos_cambio_pct": 11.2,
+      "total_pasivos_cambio_pct": 5.9,
+      "masa_salarial_cambio_pct": 15.1
+    },
+    "2023": {
+      "total_activos": 972559,
+      "total_pasivos": 161616,
+      "ratio": 6.02,
+      "masa_salarial": 5580737351948,
+      "masa_aportes": 670695439429,
+      "sml": 2680373,
+      "total_activos_cambio_pct": 3.9,
+      "total_pasivos_cambio_pct": 7.5,
+      "masa_salarial_cambio_pct": 12.6
+    },
+    "2024": {
+      "total_activos": 1041514,
+      "total_pasivos": 180191,
+      "ratio": 5.78,
+      "masa_salarial": 6154033025352,
+      "masa_aportes": 727442119655,
+      "sml": 2798309,
+      "total_activos_cambio_pct": 7.1,
+      "total_pasivos_cambio_pct": 11.5,
+      "masa_salarial_cambio_pct": 10.3
+    }
+  },
+  "por_caja": {
+    "IPS": {
+      "2020": {
+        "activos": 557564,
+        "pasivos": 61962,
+        "ratio": 9.0,
+        "masa_salarial": 2190619672745,
+        "masa_aportes": 246199271193,
+        "salario_promedio_activos": 3928912
+      },
+      "2021": {
+        "activos": 608074,
+        "pasivos": 64236,
+        "ratio": 9.47,
+        "masa_salarial": 2486388416142,
+        "masa_aportes": 281010578816,
+        "salario_promedio_activos": 4088957
+      },
+      "2022": {
+        "activos": 699728,
+        "pasivos": 69669,
+        "ratio": 10.04,
+        "masa_salarial": 3047234258495,
+        "masa_aportes": 346402948223,
+        "salario_promedio_activos": 4354884
+      },
+      "2023": {
+        "activos": 726972,
+        "pasivos": 76105,
+        "ratio": 9.55,
+        "masa_salarial": 3363352523390,
+        "masa_aportes": 379707994935,
+        "salario_promedio_activos": 4626523
+      },
+      "2024": {
+        "activos": 799664,
+        "pasivos": 90280,
+        "ratio": 8.86,
+        "masa_salarial": 3812328491420,
+        "masa_aportes": 426283924301,
+        "salario_promedio_activos": 4767413
+      }
+    },
+    "Ande": {
+      "2020": {
+        "activos": 4155,
+        "pasivos": 2216,
+        "ratio": 1.88,
+        "masa_salarial": 63339260500,
+        "masa_aportes": 4886324825,
+        "salario_promedio_activos": 15244106
+      },
+      "2021": {
+        "activos": 4920,
+        "pasivos": 2278,
+        "ratio": 2.16,
+        "masa_salarial": 73056395090,
+        "masa_aportes": 5733031669,
+        "salario_promedio_activos": 14848861
+      },
+      "2022": {
+        "activos": 4887,
+        "pasivos": 2458,
+        "ratio": 1.99,
+        "masa_salarial": 79492257306,
+        "masa_aportes": 6125078099,
+        "salario_promedio_activos": 16266065
+      },
+      "2023": {
+        "activos": 4970,
+        "pasivos": 2556,
+        "ratio": 1.94,
+        "masa_salarial": 87106884884,
+        "masa_aportes": 6603317932,
+        "salario_promedio_activos": 17526536
+      },
+      "2024": {
+        "activos": 4867,
+        "pasivos": 2668,
+        "ratio": 1.82,
+        "masa_salarial": 91268435843,
+        "masa_aportes": 6782022690,
+        "salario_promedio_activos": 18752504
+      }
+    },
+    "Bancaria": {
+      "2020": {
+        "activos": 12250,
+        "pasivos": 2878,
+        "ratio": 4.26,
+        "masa_salarial": 134762015968,
+        "masa_aportes": 31187334580,
+        "salario_promedio_activos": 11000981
+      },
+      "2021": {
+        "activos": 12492,
+        "pasivos": 2990,
+        "ratio": 4.18,
+        "masa_salarial": 145635722354,
+        "masa_aportes": 33643867387,
+        "salario_promedio_activos": 11658319
+      },
+      "2022": {
+        "activos": 12522,
+        "pasivos": 2740,
+        "ratio": 4.57,
+        "masa_salarial": 146049325965,
+        "masa_aportes": 35690057529,
+        "salario_promedio_activos": 11663418
+      },
+      "2023": {
+        "activos": 12928,
+        "pasivos": 3104,
+        "ratio": 4.16,
+        "masa_salarial": 172111129836,
+        "masa_aportes": 39049103176,
+        "salario_promedio_activos": 13313052
+      },
+      "2024": {
+        "activos": 12612,
+        "pasivos": 3147,
+        "ratio": 4.01,
+        "masa_salarial": 180183847987,
+        "masa_aportes": 40544432593,
+        "salario_promedio_activos": 14286699
+      }
+    },
+    "Cajubi": {
+      "2020": {
+        "activos": 1535,
+        "pasivos": 2056,
+        "ratio": 0.75,
+        "masa_salarial": 72733577403,
+        "masa_aportes": 7582387309,
+        "salario_promedio_activos": 47383438
+      },
+      "2021": {
+        "activos": 1432,
+        "pasivos": 2151,
+        "ratio": 0.67,
+        "masa_salarial": 75449120755,
+        "masa_aportes": 7559912267,
+        "salario_promedio_activos": 52687933
+      },
+      "2022": {
+        "activos": 0,
+        "pasivos": 2205,
+        "ratio": 0.0,
+        "masa_salarial": 45616204970,
+        "masa_aportes": 0,
+        "salario_promedio_activos": 0
+      },
+      "2023": {
+        "activos": 1627,
+        "pasivos": 2761,
+        "ratio": 0.59,
+        "masa_salarial": 94667316780,
+        "masa_aportes": 9348758912,
+        "salario_promedio_activos": 58185198
+      },
+      "2024": {
+        "activos": 1573,
+        "pasivos": 2329,
+        "ratio": 0.68,
+        "masa_salarial": 99630481452,
+        "masa_aportes": 9640993138,
+        "salario_promedio_activos": 63337878
+      }
+    },
+    "Ferroviaria": {
+      "2020": {
+        "activos": 4,
+        "pasivos": 373,
+        "ratio": 0.01,
+        "masa_salarial": 761976390,
+        "masa_aportes": 6726918,
+        "salario_promedio_activos": 190494098
+      },
+      "2021": {
+        "activos": 4,
+        "pasivos": 373,
+        "ratio": 0.01,
+        "masa_salarial": 761976390,
+        "masa_aportes": 6726918,
+        "salario_promedio_activos": 190494098
+      },
+      "2022": {
+        "activos": 4,
+        "pasivos": 373,
+        "ratio": 0.01,
+        "masa_salarial": 761976390,
+        "masa_aportes": 6726918,
+        "salario_promedio_activos": 190494098
+      },
+      "2023": {
+        "activos": 3,
+        "pasivos": 321,
+        "ratio": 0.01,
+        "masa_salarial": 759665870,
+        "masa_aportes": 8220614,
+        "salario_promedio_activos": 253221957
+      },
+      "2024": {
+        "activos": 3,
+        "pasivos": 279,
+        "ratio": 0.01,
+        "masa_salarial": 869289170,
+        "masa_aportes": 8220614,
+        "salario_promedio_activos": 289763057
+      }
+    },
+    "Fiscal": {
+      "2020": {
+        "activos": 212950,
+        "pasivos": 67502,
+        "ratio": 3.15,
+        "masa_salarial": 1457573289114,
+        "masa_aportes": 187814399058,
+        "salario_promedio_activos": 6844674
+      },
+      "2021": {
+        "activos": 214882,
+        "pasivos": 67799,
+        "ratio": 3.17,
+        "masa_salarial": 1516187135541,
+        "masa_aportes": 195265228710,
+        "salario_promedio_activos": 7055906
+      },
+      "2022": {
+        "activos": 219043,
+        "pasivos": 70628,
+        "ratio": 3.1,
+        "masa_salarial": 1628932489342,
+        "masa_aportes": 207314136696,
+        "salario_promedio_activos": 7436588
+      },
+      "2023": {
+        "activos": 220197,
+        "pasivos": 74339,
+        "ratio": 2.96,
+        "masa_salarial": 1829723910220,
+        "masa_aportes": 230856075160,
+        "salario_promedio_activos": 8309486
+      },
+      "2024": {
+        "activos": 222795,
+        "pasivos": 78967,
+        "ratio": 2.82,
+        "masa_salarial": 1961996638400,
+        "masa_aportes": 244182526319,
+        "salario_promedio_activos": 8806287
+      }
+    },
+    "Municipal": {
+      "2020": {
+        "activos": 7611,
+        "pasivos": 2062,
+        "ratio": 3.69,
+        "masa_salarial": 31527008310,
+        "masa_aportes": 5145708163,
+        "salario_promedio_activos": 4142295
+      },
+      "2021": {
+        "activos": 0,
+        "pasivos": 2154,
+        "ratio": 0.0,
+        "masa_salarial": 6268864253,
+        "masa_aportes": 0,
+        "salario_promedio_activos": 0
+      },
+      "2022": {
+        "activos": 0,
+        "pasivos": 2300,
+        "ratio": 0.0,
+        "masa_salarial": 6917204694,
+        "masa_aportes": 0,
+        "salario_promedio_activos": 0
+      },
+      "2023": {
+        "activos": 5862,
+        "pasivos": 2430,
+        "ratio": 2.41,
+        "masa_salarial": 33015920968,
+        "masa_aportes": 5121968700,
+        "salario_promedio_activos": 5632194
+      },
+      "2024": {
+        "activos": 0,
+        "pasivos": 2521,
+        "ratio": 0.0,
+        "masa_salarial": 7755841080,
+        "masa_aportes": 0,
+        "salario_promedio_activos": 0
+      }
+    }
+  }
+}
