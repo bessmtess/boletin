@@ -714,13 +714,28 @@ const M = document.getElementById('mainContent');
 // ======================== SEC: SALARIOS ========================
 !function(){
     const s=document.createElement('div'); s.id='s-salarios'; s.className='section';
+
+    // Compute weighted median and mean
+    const cwsAll=Object.entries(D).filter(([,c])=>c.salarios?.['2024']&&c.activos?.['2024']);
+    const pairs=cwsAll.map(([n,c])=>({n,w:Number(c.activos['2024']||0),s:Number(c.salarios['2024'].salario_activo||0)})).filter(p=>p.w>0&&p.s>0);
+    pairs.sort((a,b)=>a.s-b.s);
+    const totalW=pairs.reduce((s,p)=>s+p.w,0);
+    const wMean=pairs.reduce((s,p)=>s+p.w*p.s,0)/totalW;
+    let cumW=0, wMedian=0;
+    for(const p of pairs){ cumW+=p.w; if(cumW>=totalW/2){wMedian=p.s;break;} }
+
     s.innerHTML=`
     <div class="sec-header"><h2>Salarios y Montos Promedios</h2><p>Remuneraciones de activos y beneficios de jubilados/pensionados</p></div>
-    <div class="grid g1">
-        <div class="card"><div class="card-head"><h3>Salario Promedio del Cotizante Activo vs Jubilación Promedio</h3><div class="tag">2024 — Guaraníes</div></div><div class="card-body" id="sal-comp"></div></div>
+    <div class="kpi-row">
+        <div class="kpi"><div class="kpi-icon navy"><i class="fas fa-calculator"></i></div><div class="kpi-lbl">Mediana Salarial del Sistema</div><div class="kpi-val" style="font-size:20px">${fmtGs(wMedian)}</div><div class="kpi-sub">Ponderada por cantidad de cotizantes</div></div>
+        <div class="kpi red"><div class="kpi-icon red"><i class="fas fa-chart-bar"></i></div><div class="kpi-lbl">Promedio Ponderado del Sistema</div><div class="kpi-val" style="font-size:20px">${fmtGs(wMean)}</div><div class="kpi-sub">Promedio real considerando tamaño de cajas</div></div>
+        <div class="kpi teal"><div class="kpi-icon teal"><i class="fas fa-users"></i></div><div class="kpi-lbl">Cotizantes Activos Totales</div><div class="kpi-val">${fmt(totalW)}</div><div class="kpi-sub">Base de cálculo</div></div>
     </div>
     <div class="grid g1">
-        <div class="card"><div class="card-head"><h3>Evolución del Salario Promedio del Cotizante Activo</h3><div class="tag">2020–2024</div></div><div class="card-body" id="sal-evo"></div></div>
+        <div class="card"><div class="card-head"><h3>Salario Promedio del Cotizante Activo vs Jubilación Promedio</h3><div class="tag">2024 — Guaraníes</div></div><div class="card-sub">Las líneas punteadas muestran la mediana (verde) y el promedio ponderado (azul) del sistema — la realidad de la mayoría de los cotizantes</div><div class="card-body" id="sal-comp"></div></div>
+    </div>
+    <div class="grid g1">
+        <div class="card"><div class="card-head"><h3>Evolución del Salario Promedio del Cotizante Activo</h3><div class="tag">2020–2024</div></div><div class="card-sub">Línea punteada: mediana ponderada del sistema 2024</div><div class="card-body" id="sal-evo"></div></div>
     </div>
     <div class="grid g1">
         <div class="card"><div class="card-head"><h3>Tasa de Reemplazo: Jubilación Promedio / Salario Activo</h3><div class="tag red">2024</div></div><div class="card-sub">Indica qué porcentaje del salario activo representa la jubilación promedio</div><div class="card-body" id="sal-ratio"></div></div>
@@ -733,18 +748,30 @@ const M = document.getElementById('mainContent');
         const sA=cws.map(([,c])=>Number(c.salarios['2024'].salario_activo||0));
         const sJ=cws.map(([,c])=>Number(c.salarios['2024'].jubilacion_promedio||0));
 
-        // Grouped bar: salario vs jubilacion
+        // Grouped bar: salario vs jubilacion + median/mean lines
         Plotly.newPlot('sal-comp',[
             {x:cn,y:sA,name:'Salario Activo',type:'bar',marker:{color:C.navy},hovertemplate:'%{x}<br>Salario: Gs. %{y:,.0f}<extra></extra>',text:sA.map(v=>'Gs. '+fmtM(v)),textposition:'outside',textfont:{size:10}},
             {x:cn,y:sJ,name:'Jubilación Promedio',type:'bar',marker:{color:C.red},hovertemplate:'%{x}<br>Jubilación: Gs. %{y:,.0f}<extra></extra>',text:sJ.map(v=>'Gs. '+fmtM(v)),textposition:'outside',textfont:{size:10}}
-        ],{...LO,barmode:'group',bargap:0.3,height:420,yaxis:{...LO.yaxis,title:{text:'Guaraníes'}},margin:{...LO.margin,b:80,t:36}},CFG);
+        ],{...LO,barmode:'group',bargap:0.3,height:460,yaxis:{...LO.yaxis,title:{text:'Guaraníes'}},margin:{...LO.margin,b:80,t:36},
+            shapes:[
+                {type:'line',x0:-0.5,x1:cn.length-0.5,y0:wMedian,y1:wMedian,line:{color:C.teal,width:2.5,dash:'dash'}},
+                {type:'line',x0:-0.5,x1:cn.length-0.5,y0:wMean,y1:wMean,line:{color:C.cyan,width:2,dash:'dot'}}
+            ],
+            annotations:[
+                {x:cn.length-0.6,y:wMedian,text:'<b>Mediana: '+fmtGs(wMedian)+'</b>',showarrow:true,arrowhead:0,ax:40,ay:-25,font:{size:11,color:C.teal},bgcolor:'rgba(255,255,255,0.9)',bordercolor:C.teal,borderwidth:1,borderpad:4},
+                {x:cn.length-0.6,y:wMean,text:'<b>Promedio pond.: '+fmtGs(wMean)+'</b>',showarrow:true,arrowhead:0,ax:40,ay:25,font:{size:11,color:C.cyan},bgcolor:'rgba(255,255,255,0.9)',bordercolor:C.cyan,borderwidth:1,borderpad:4}
+            ]
+        },CFG);
 
-        // Evolution lines
+        // Evolution lines + median reference
         const evoT=cws.map(([n,c])=>({
             x:YRS, y:YRS.map(y=>Number(c.salarios?.[y]?.salario_activo||0)),
             name:n, mode:'lines+markers', line:{color:CAJA_C[n],width:2.5,shape:'spline'}, marker:{size:7}
         }));
-        Plotly.newPlot('sal-evo',evoT,{...LO,height:400,yaxis:{...LO.yaxis,title:{text:'Guaraníes'}}},CFG);
+        Plotly.newPlot('sal-evo',evoT,{...LO,height:420,yaxis:{...LO.yaxis,title:{text:'Guaraníes'}},
+            shapes:[{type:'line',x0:YRS[0],x1:YRS[4],y0:wMedian,y1:wMedian,line:{color:C.teal,width:2,dash:'dash'}}],
+            annotations:[{x:YRS[4],y:wMedian,text:'<b>Mediana sistema</b>',showarrow:true,arrowhead:0,ax:50,ay:-20,font:{size:10,color:C.teal},bgcolor:'rgba(255,255,255,0.9)',bordercolor:C.teal,borderwidth:1,borderpad:3}]
+        },CFG);
 
         // Replacement rate
         const ratios=cws.map(([,c])=>{const r=Number(c.salarios['2024'].ratio||0); return r>1?(r*100).toFixed(1):(r*100).toFixed(1);});
