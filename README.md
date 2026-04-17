@@ -1,68 +1,38 @@
-# 📊 Dashboard Estadístico - Sistema Previsional Paraguay
+# Boletín de Seguridad Social 2025 — Dashboard Interactivo (MTESS)
 
-Dashboard interactivo con visualizaciones del sistema previsional de Paraguay, incluyendo datos de ANDE y Caja Bancaria (2020-2024).
+Dashboard interactivo del **Anexo Estadístico** del Boletín de Seguridad Social 2025 (serie 2020–2024), con visualizaciones por caja previsional (IPS, Caja Fiscal, ANDE, Bancaria, CAJUBI, Ferroviaria, Municipal y Parlamentaria).
 
-## 🚀 Ver Dashboard
+## Sitio en vivo
 
-Visita el dashboard en vivo: [https://TU-USUARIO.github.io/TU-REPOSITORIO/](https://TU-USUARIO.github.io/TU-REPOSITORIO/)
+`https://bessmtess.github.io/boletin/`
 
-## 📈 Características
+## Cómo actualizar el dashboard
 
-- **Visualizaciones Interactivas**: Gráficos dinámicos con Plotly.js
-- **Análisis Comparativo**: Comparación entre ANDE y Caja Bancaria
-- **Datos Actualizados**: Información del periodo 2020-2024
-- **Responsive Design**: Optimizado para desktop y móvil
+**Requisitos**: Python 3.9+ y `openpyxl`.
 
-## 📊 Indicadores Incluidos
+1) Actualizar el Excel del anexo (xlsx).
+2) Regenerar `index.html`:
 
-- Evolución de afiliados activos
-- Pirámides poblacionales por edad y sexo
-- Beneficiarios pasivos por tipo de prestación
-- Ratio activos/pasivos
-- Salarios promedio
-
-## 🛠️ Tecnologías
-
-- HTML5 / CSS3
-- JavaScript
-- Plotly.js para visualizaciones
-- GitHub Pages para hosting
-
-## 📁 Estructura del Proyecto
-
-```
-├── index.html              # Dashboard principal
-├── datos/                  # Datos en formato CSV
-│   ├── activos_resumen.csv
-│   ├── pasivos_resumen.csv
-│   └── datos_bess2025.csv
-└── README.md              # Este archivo
-```
-
-## 🔧 Instalación Local
-
-1. Clona el repositorio:
 ```bash
-git clone https://github.com/TU-USUARIO/TU-REPOSITORIO.git
+cd GITHUB
+python3 generate_dashboard.py --excel-path ../Anexo_Estadístico_Boletin_Seguridad_Social_2025.xlsx
 ```
 
-2. Abre `index.html` en tu navegador
+Alternativa: definir `BESS_EXCEL_PATH` con la ruta al Excel y ejecutar sin `--excel-path`.
 
-## 📝 Fuentes de Datos
+3) Publicar:
 
-- Administración Nacional de Electricidad (ANDE)
-- Caja Bancaria
-- Dirección de Estudios Económicos - Ministerio de Hacienda
+```bash
+git add index.html
+git commit -m "Actualizar dashboard"
+git push
+```
 
-## 📄 Licencia
+## Estructura
 
-Este proyecto es de código abierto y está disponible bajo la licencia MIT.
+- `index.html`: sitio publicado (GitHub Pages).
+- `generate_dashboard.py`: generador a partir del Excel.
 
-## 👥 Contacto
+## Nota técnica
 
-Dirección de Estudios Económicos  
-Ministerio de Hacienda - Paraguay
-
----
-
-**Última actualización**: Diciembre 2024
+El dashboard es **estático**: los datos quedan embebidos dentro de `index.html` (no hay backend).

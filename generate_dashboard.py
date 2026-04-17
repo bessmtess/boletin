@@ -1,11 +1,92 @@
 #!/usr/bin/env python3
 """Generate ultra-improved BESS2025 dashboard - MTESS style."""
-import openpyxl, json, os
+import argparse
+import json
+import os
+import re
+from pathlib import Path
+from typing import Optional
 
-EXCEL_PATH = '/Users/diegobernardomezabogado/Library/CloudStorage/GoogleDrive-dmeza.py@gmail.com/Mi unidad/BESS_MTESS/Anexo_Estadístico_Boletin_Seguridad_Social_2025.xlsx'
-wb = openpyxl.load_workbook(EXCEL_PATH, data_only=True)
+import openpyxl
 
-cajas_map = {'1':'IPS','2':'Caja Fiscal','3':'Caja ANDE','4':'Caja Bancaria','5':'Caja Municipal','6':'Caja Ferroviaria','7':'CAJUBI','8':'Caja Parlamentaria'}
+YEARS = ["2020", "2021", "2022", "2023", "2024"]
+AGE_GROUP_RE = re.compile(r"^\s*\d+\s*a\s*\d+\s*$", re.IGNORECASE)
+AGE_OPEN_RE = re.compile(r"^\s*\d+\s*(?:y\s*m[aá]s|\+)\s*$", re.IGNORECASE)
+
+
+def years_map(row: list, start_col: int) -> dict:
+    out = {}
+    for i, year in enumerate(YEARS):
+        idx = start_col + i
+        out[year] = row[idx] if idx < len(row) and row[idx] is not None else 0
+    return out
+
+
+def is_age_group(label: str) -> bool:
+    return bool(AGE_GROUP_RE.match(label) or AGE_OPEN_RE.match(label))
+
+
+def normalize_age_group(label: str) -> str:
+    return re.sub(r"\s+", " ", label.strip())
+
+
+def resolve_excel_path(cli_path: Optional[str]) -> Path:
+    if cli_path:
+        return Path(cli_path).expanduser()
+
+    env_path = os.getenv("BESS_EXCEL_PATH")
+    if env_path:
+        return Path(env_path).expanduser()
+
+    candidates = [
+        # Common location in this workspace (repo lives in BESS2025/GITHUB)
+        Path(__file__).resolve().parent.parent / "Anexo_Estadístico_Boletin_Seguridad_Social_2025.xlsx",
+        # Same folder as this script (if someone copies the Excel into the repo)
+        Path(__file__).resolve().parent / "Anexo_Estadístico_Boletin_Seguridad_Social_2025.xlsx",
+        # Historical absolute path (kept as last-resort fallback)
+        Path(
+            "/Users/diegobernardomezabogado/Library/CloudStorage/GoogleDrive-dmeza.py@gmail.com/Mi unidad/BESS_MTESS/Anexo_Estadístico_Boletin_Seguridad_Social_2025.xlsx"
+        ),
+    ]
+    for c in candidates:
+        if c.exists():
+            return c
+    return candidates[0]
+
+
+parser = argparse.ArgumentParser(description="Generate MTESS-style BESS dashboard (index.html).")
+parser.add_argument(
+    "--excel-path",
+    dest="excel_path",
+    default=None,
+    help="Ruta al Excel del Anexo Estadístico (xlsx). Si se omite, usa BESS_EXCEL_PATH o rutas comunes.",
+)
+parser.add_argument(
+    "--out",
+    dest="out_path",
+    default=None,
+    help="Ruta de salida del HTML. Por defecto: index.html en este directorio.",
+)
+args = parser.parse_args()
+
+excel_path = resolve_excel_path(args.excel_path)
+if not excel_path.exists():
+    raise SystemExit(f"Excel no encontrado: {excel_path} (use --excel-path o BESS_EXCEL_PATH)")
+
+wb = openpyxl.load_workbook(excel_path, data_only=True)
+
+# Nota: En el Excel actual, las secciones de CAJUBI y Caja Municipal están numeradas al revés
+# respecto al mapeo original. Por eso se invierte aquí (corrige la app web).
+cajas_map = {
+    "1": "IPS",
+    "2": "Caja Fiscal",
+    "3": "Caja ANDE",
+    "4": "Caja Bancaria",
+    "5": "CAJUBI",
+    "6": "Caja Ferroviaria",
+    "7": "Caja Municipal",
+    "8": "Caja Parlamentaria",
+}
 
 all_data = {}
 for name in wb.sheetnames:
@@ -19,9 +100,13 @@ for sec_num, caja_name in cajas_map.items():
     sk = f'{sec_num}.1'
     if sk in all_data:
         for row in all_data[sk]:
-            if row[1]=='Activos': cd['activos']={'2020':row[2],'2021':row[3],'2022':row[4],'2023':row[5],'2024':row[6]}
-            elif row[1]=='Pasivos': cd['pasivos']={'2020':row[2],'2021':row[3],'2022':row[4],'2023':row[5],'2024':row[6]}
-            elif row[1] and 'Relación' in str(row[1]): cd['relacion']={'2020':row[2],'2021':row[3],'2022':row[4],'2023':row[5],'2024':row[6]}
+            label = str(row[1]).strip().lower() if len(row) > 1 and row[1] is not None else ""
+            if label in {"activos", "cotizantes", "cotizantes activos"}:
+                cd["activos"] = years_map(row, 2)
+            elif label in {"pasivos", "jubilados/pensionados", "jubilados", "pensionados"}:
+                cd["pasivos"] = years_map(row, 2)
+            elif label and ("relación" in label or "relacion" in label):
+                cd["relacion"] = years_map(row, 2)
     sk = f'{sec_num}.2'
     if sk in all_data:
         tipos = {}
@@ -35,11 +120,19 @@ for sec_num, caja_name in cajas_map.items():
     if sk in all_data:
         sx={'activos':{},'pasivos':{}}; cg=None
         for row in all_data[sk]:
-            if row[1] in ['Activos','Cotizantes']: cg='activos'
-            elif row[1] in ['Pasivos','Jubilados/Pensionados']: cg='pasivos'
-            if cg and row[2]=='Hombres': sx[cg]['Hombres']={'2020':row[3],'2021':row[4],'2022':row[5],'2023':row[6],'2024':row[7]}
-            elif cg and row[2]=='Mujeres': sx[cg]['Mujeres']={'2020':row[3],'2021':row[4],'2022':row[5],'2023':row[6],'2024':row[7]}
-            elif cg and row[2]=='Total': sx[cg]['Total']={'2020':row[3],'2021':row[4],'2022':row[5],'2023':row[6],'2024':row[7]}
+            block = str(row[1]).strip().lower() if len(row) > 1 and row[1] is not None else ""
+            if block in {"activos", "cotizantes", "cotizantes activos"}:
+                cg = "activos"
+            elif block in {"pasivos", "jubilados/pensionados", "jubilados", "pensionados"}:
+                cg = "pasivos"
+
+            sex = str(row[2]).strip() if len(row) > 2 and row[2] is not None else ""
+            if cg and sex == "Hombres":
+                sx[cg]["Hombres"] = years_map(row, 3)
+            elif cg and sex == "Mujeres":
+                sx[cg]["Mujeres"] = years_map(row, 3)
+            elif cg and sex == "Total":
+                sx[cg]["Total"] = years_map(row, 3)
         cd['por_sexo']=sx
     sk = f'{sec_num}.4'
     if sk in all_data:
@@ -48,28 +141,64 @@ for sec_num, caja_name in cajas_map.items():
             if row[1] and str(row[1]).strip() in ['2020','2021','2022','2023','2024']:
                 sal[str(row[1]).strip()]={'salario_activo':row[2],'jubilacion_promedio':row[3],'ratio':row[4]}
         cd['salarios']=sal
-    for suffix, key in [('5','activos_edad'),('7','vejez_edad'),('6','salario_edad')]:
+    for suffix, key in [("5", "activos_edad"), ("7", "vejez_edad"), ("6", "salario_edad")]:
         sk = f'{sec_num}.{suffix}'
         if sk in all_data:
-            items=[]
+            items = []
+            seen_groups: set[str] = set()
             for row in all_data[sk]:
-                if row[1] and 'a' in str(row[1]) and any(c.isdigit() for c in str(row[1])):
-                    try:
-                        h=float(row[2]) if row[2] else 0; m=float(row[3]) if row[3] else 0; t=float(row[4]) if row[4] else 0
-                        items.append({'grupo':str(row[1]).strip(),'hombres':round(h,0),'mujeres':round(m,0),'total':round(t,0)})
-                    except: pass
-            cd[key]=items
+                label_raw = str(row[1]) if len(row) > 1 and row[1] is not None else ""
+                label = normalize_age_group(label_raw)
+                if not label or not is_age_group(label):
+                    continue
+                if label in seen_groups:
+                    continue
+                seen_groups.add(label)
+                try:
+                    h = float(row[2]) if len(row) > 2 and row[2] else 0
+                    m = float(row[3]) if len(row) > 3 and row[3] else 0
+                    t = float(row[4]) if len(row) > 4 and row[4] else 0
+                    items.append(
+                        {
+                            "grupo": label,
+                            "hombres": round(abs(h), 0),
+                            "mujeres": round(abs(m), 0),
+                            "total": round(abs(t), 0),
+                        }
+                    )
+                except Exception:
+                    pass
+            if items:
+                cd[key] = items
     # X.8 - Monto promedio vejez por edad
     sk = f'{sec_num}.8'
     if sk in all_data:
-        items=[]
+        items = []
+        seen_groups: set[str] = set()
         for row in all_data[sk]:
-            if row[1] and 'a' in str(row[1]) and any(c.isdigit() for c in str(row[1])):
-                try:
-                    h=float(row[2]) if row[2] else 0; m=float(row[3]) if row[3] else 0; t=float(row[4]) if row[4] else 0
-                    items.append({'grupo':str(row[1]).strip(),'hombres':round(h,0),'mujeres':round(m,0),'total':round(t,0)})
-                except: pass
-        cd['monto_vejez_edad']=items
+            label_raw = str(row[1]) if len(row) > 1 and row[1] is not None else ""
+            label = normalize_age_group(label_raw)
+            if not label or not is_age_group(label):
+                continue
+            if label in seen_groups:
+                continue
+            seen_groups.add(label)
+            try:
+                h = float(row[2]) if len(row) > 2 and row[2] else 0
+                m = float(row[3]) if len(row) > 3 and row[3] else 0
+                t = float(row[4]) if len(row) > 4 and row[4] else 0
+                items.append(
+                    {
+                        "grupo": label,
+                        "hombres": round(abs(h), 0),
+                        "mujeres": round(abs(m), 0),
+                        "total": round(abs(t), 0),
+                    }
+                )
+            except Exception:
+                pass
+        if items:
+            cd["monto_vejez_edad"] = items
     summary[caja_name]=cd
 
 def clean(obj):
@@ -113,9 +242,21 @@ html = '''<!DOCTYPE html>
 
 * { margin:0; padding:0; box-sizing:border-box; }
 
+html { scroll-behavior: smooth; }
+
+:focus-visible {
+    outline: 3px solid rgba(6,147,227,0.35);
+    outline-offset: 2px;
+}
+
 body {
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg);
+    background:
+        radial-gradient(1000px 420px at 12% -10%, rgba(52,226,228,0.14), transparent 60%),
+        radial-gradient(900px 380px at 92% 8%, rgba(6,147,227,0.12), transparent 55%),
+        radial-gradient(1000px 520px at 28% 115%, rgba(234,36,36,0.08), transparent 60%),
+        var(--bg);
+    background-attachment: fixed;
     color: var(--text);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
@@ -202,6 +343,12 @@ body {
     padding: 18px 20px;
     text-align: center;
     min-width: 170px;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.hero-kpi:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.18);
+    border-color: rgba(52,226,228,0.28);
 }
 .hero-kpi .num {
     font-size: 28px;
@@ -223,8 +370,10 @@ body {
 
 /* ===== NAV ===== */
 .nav {
-    background: white;
-    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.86);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(227,232,239,0.9);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -261,6 +410,7 @@ body {
 .nav-btn.active {
     color: var(--mtess-red);
     border-bottom-color: var(--mtess-red);
+    background: linear-gradient(180deg, rgba(234,36,36,0.10), transparent);
 }
 
 /* ===== MAIN ===== */
@@ -342,14 +492,33 @@ body {
 @media (max-width:900px) { .g2,.g3 { grid-template-columns:1fr; } }
 
 .card {
+    position: relative;
     background: var(--card);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(227,232,239,0.9);
     overflow: hidden;
-    transition: box-shadow 0.2s;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
-.card:hover { box-shadow: var(--shadow); }
+.card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(700px 260px at 10% 0%, rgba(52,226,228,0.14), transparent 60%),
+        radial-gradient(700px 260px at 110% 0%, rgba(6,147,227,0.10), transparent 55%),
+        radial-gradient(800px 320px at 30% 120%, rgba(234,36,36,0.08), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+    pointer-events: none;
+}
+.card > * { position: relative; z-index: 1; }
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(6,147,227,0.22);
+}
+.card:hover::before { opacity: 1; }
 .card-head {
     padding: 18px 24px 0;
     display: flex;
@@ -379,7 +548,10 @@ body {
 }
 .pill:hover { border-color: var(--mtess-red); color: var(--mtess-red); }
 .pill.on {
-    background: var(--mtess-red); border-color: var(--mtess-red); color: white;
+    background: linear-gradient(135deg, var(--mtess-red) 0%, #ff4d4d 100%);
+    border-color: rgba(234,36,36,0.95);
+    color: white;
+    box-shadow: 0 10px 22px rgba(234,36,36,0.22);
 }
 
 /* ===== TABLE ===== */
@@ -605,15 +777,15 @@ const M = document.getElementById('mainContent');
         const tA=YRS.map(y=>Object.values(D).reduce((s,c)=>s+Number(c.activos?.[y]||0),0));
         const tP=YRS.map(y=>Object.values(D).reduce((s,c)=>s+Number(c.pasivos?.[y]||0),0));
         Plotly.newPlot('e-total',[
-            {x:YRS,y:tA,name:'Activos',fill:'tozeroy',fillcolor:'rgba(29,67,84,0.08)',line:{color:C.navy,width:3,shape:'spline'},marker:{size:10,color:C.navy},mode:'lines+markers',hovertemplate:'Activos: %{y:,.0f}<extra></extra>'},
-            {x:YRS,y:tP,name:'Pasivos',fill:'tozeroy',fillcolor:'rgba(234,36,36,0.06)',line:{color:C.red,width:3,shape:'spline'},marker:{size:10,color:C.red},mode:'lines+markers',hovertemplate:'Pasivos: %{y:,.0f}<extra></extra>'}
+            {x:YRS,y:tA,name:'Activos',fill:'tozeroy',fillcolor:'rgba(29,67,84,0.08)',line:{color:C.navy,width:3,shape:'spline',smoothing:1.15},marker:{size:10,color:C.navy},mode:'lines+markers',hovertemplate:'Activos: %{y:,.0f}<extra></extra>'},
+            {x:YRS,y:tP,name:'Pasivos',fill:'tozeroy',fillcolor:'rgba(234,36,36,0.06)',line:{color:C.red,width:3,shape:'spline',smoothing:1.15},marker:{size:10,color:C.red},mode:'lines+markers',hovertemplate:'Pasivos: %{y:,.0f}<extra></extra>'}
         ],{...LO,height:360},CFG);
 
-        const mkTrace=(key,dash)=>Object.entries(D).map(([n,c])=>({x:YRS,y:YRS.map(y=>Number(c[key]?.[y]||0)),name:n,mode:'lines+markers',line:{color:CAJA_C[n],width:2.5,shape:'spline',dash},marker:{size:7,color:CAJA_C[n]}}));
+        const mkTrace=(key,dash)=>Object.entries(D).map(([n,c])=>({x:YRS,y:YRS.map(y=>Number(c[key]?.[y]||0)),name:n,mode:'lines+markers',line:{color:CAJA_C[n],width:2.5,shape:'spline',smoothing:1.15,dash},marker:{size:7,color:CAJA_C[n]}}));
         Plotly.newPlot('e-act',mkTrace('activos'),{...LO,legend:{...LO.legend,font:{size:10}}},CFG);
         Plotly.newPlot('e-pas',mkTrace('pasivos'),{...LO,legend:{...LO.legend,font:{size:10}}},CFG);
 
-        const relT=Object.entries(D).filter(([,c])=>c.relacion).map(([n,c])=>({x:YRS,y:YRS.map(y=>Number(c.relacion?.[y]||0)),name:n,mode:'lines+markers',line:{color:CAJA_C[n],width:2.5,shape:'spline'},marker:{size:7}}));
+        const relT=Object.entries(D).filter(([,c])=>c.relacion).map(([n,c])=>({x:YRS,y:YRS.map(y=>Number(c.relacion?.[y]||0)),name:n,mode:'lines+markers',line:{color:CAJA_C[n],width:2.5,shape:'spline',smoothing:1.15},marker:{size:7}}));
         Plotly.newPlot('e-rel',relT,{...LO,height:400,yaxis:{...LO.yaxis,title:{text:'Activos por cada Pasivo',font:{size:13}}},shapes:[{type:'line',x0:YRS[0],x1:YRS[4],y0:2,y1:2,line:{color:C.red,width:2,dash:'dash'}}],annotations:[{x:YRS[4],y:2.15,text:'<b>Umbral crítico</b>',showarrow:false,font:{size:11,color:C.red}}]},CFG);
     },100);
 }();
@@ -647,8 +819,8 @@ const M = document.getElementById('mainContent');
             <div class="card"><div class="card-head"><h3>Evolución Activos y Pasivos</h3></div><div class="card-body" id="cd-evo"></div></div>
             <div class="card"><div class="card-head"><h3>Pasivos por Tipo de Beneficio</h3><div class="tag">2024</div></div><div class="card-body" id="cd-tipo"></div></div>
         </div>
-        ${c.activos_edad?`<div class="grid g1"><div class="card"><div class="card-head"><h3>Cotizantes Activos por Grupo de Edad y Sexo</h3></div><div class="card-body" id="cd-age"></div></div></div>`:''}
-        ${c.monto_vejez_edad?`<div class="grid g1"><div class="card"><div class="card-head"><h3>Monto Promedio Jubilación por Vejez según Edad y Sexo</h3><div class="tag">Guaraníes</div></div><div class="card-body" id="cd-montoVejez"></div></div></div>`:''}`;
+        ${c.activos_edad?.length?`<div class="grid g1"><div class="card"><div class="card-head"><h3>Cotizantes Activos por Grupo de Edad y Sexo</h3></div><div class="card-body" id="cd-age"></div></div></div>`:''}
+        ${c.monto_vejez_edad?.length?`<div class="grid g1"><div class="card"><div class="card-head"><h3>Monto Promedio Jubilación por Vejez según Edad y Sexo</h3><div class="tag">Guaraníes</div></div><div class="card-body" id="cd-montoVejez"></div></div></div>`:''}`;
 
         // Evo chart
         Plotly.newPlot('cd-evo',[
@@ -669,7 +841,7 @@ const M = document.getElementById('mainContent');
         }
 
         // Age pyramid activos
-        if(c.activos_edad && document.getElementById('cd-age')){
+        if(c.activos_edad?.length && document.getElementById('cd-age')){
             const g=c.activos_edad.map(e=>e.grupo);
             Plotly.newPlot('cd-age',[
                 {x:g,y:c.activos_edad.map(e=>e.hombres),name:'Hombres',type:'bar',marker:{color:C.navy,line:{width:0}},hovertemplate:'Hombres: %{y:,.0f}<extra></extra>'},
@@ -678,7 +850,7 @@ const M = document.getElementById('mainContent');
         }
 
         // Monto vejez por edad
-        if(c.monto_vejez_edad && document.getElementById('cd-montoVejez')){
+        if(c.monto_vejez_edad?.length && document.getElementById('cd-montoVejez')){
             const g=c.monto_vejez_edad.map(e=>e.grupo);
             Plotly.newPlot('cd-montoVejez',[
                 {x:g,y:c.monto_vejez_edad.map(e=>e.hombres),name:'Hombres',type:'bar',marker:{color:C.navy},hovertemplate:'Hombres: %{y:,.0f} Gs.<extra></extra>'},
@@ -740,7 +912,7 @@ const M = document.getElementById('mainContent');
                 const m=Number(D[c].por_sexo?.activos?.Mujeres?.[y]||0);
                 return (h+m)>0?(m/(h+m)*100):0;
             }),
-            name:c, mode:'lines+markers', line:{color:CAJA_C[c],width:2.5,shape:'spline'}, marker:{size:7}
+            name:c, mode:'lines+markers', line:{color:CAJA_C[c],width:2.5,shape:'spline',smoothing:1.15}, marker:{size:7}
         }));
         Plotly.newPlot('g-evo',evoT,{...LO,height:380,yaxis:{...LO.yaxis,title:{text:'% Mujeres'},range:[0,70]},shapes:[{type:'line',x0:YRS[0],x1:YRS[4],y0:50,y1:50,line:{color:'#adb5bd',width:1.5,dash:'dot'}}]},CFG);
     },200);
@@ -826,7 +998,7 @@ const M = document.getElementById('mainContent');
         // Evolution lines
         const evoT=cws.map(([n,c])=>({
             x:YRS, y:YRS.map(y=>Number(c.salarios?.[y]?.salario_activo||0)),
-            name:n, mode:'lines+markers', line:{color:CAJA_C[n],width:2.5,shape:'spline'}, marker:{size:7}
+            name:n, mode:'lines+markers', line:{color:CAJA_C[n],width:2.5,shape:'spline',smoothing:1.15}, marker:{size:7}
         }));
         Plotly.newPlot('sal-evo',evoT,{...LO,height:400,yaxis:{...LO.yaxis,title:{text:'Guaraníes'}}},CFG);
 
@@ -891,8 +1063,9 @@ const M = document.getElementById('mainContent');
 </body>
 </html>'''
 
-out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'index.html')
-with open(out, 'w', encoding='utf-8') as f:
-    f.write(html)
-print(f"Dashboard generated: {out}")
-print(f"Size: {os.path.getsize(out)/1024:.1f} KB")
+out_path = Path(args.out_path).expanduser() if args.out_path else (Path(__file__).resolve().parent / "index.html")
+out_path.parent.mkdir(parents=True, exist_ok=True)
+out_path.write_text(html, encoding="utf-8")
+print(f"Excel: {excel_path}")
+print(f"Dashboard generated: {out_path}")
+print(f"Size: {out_path.stat().st_size/1024:.1f} KB")
