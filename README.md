@@ -32,6 +32,8 @@ git push
 
 - `index.html`: sitio publicado (GitHub Pages).
 - `generate_dashboard.py`: generador a partir del Excel.
+- `encuesta/`: mini app de encuesta (login y cambio de contraseña **solo en el navegador**, no seguro).
+- `apps_script/encuesta/`: versión de la encuesta en Google Apps Script (Web App) con guardado en Google Sheet.
 
 ## Nota técnica
 

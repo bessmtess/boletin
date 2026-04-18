@@ -570,6 +570,11 @@ body {
 .tbl tr:hover td { background: rgba(6,147,227,0.04); }
 .tbl tr:last-child td { font-weight:700; background: rgba(29,67,84,0.05); }
 
+/* ===== INSIGHTS ===== */
+.ins-list { padding-left: 18px; margin: 12px 0 6px; }
+.ins-list li { margin: 8px 0; color: var(--text-secondary); }
+.ins-list strong { color: var(--text); }
+
 /* ===== FOOTER ===== */
 .footer {
     background: var(--mtess-navy-deep); color: rgba(255,255,255,0.6);
@@ -661,6 +666,58 @@ function fmt(n){ return n==null||n===0?'0':Number(n).toLocaleString('es-PY'); }
 function fmtGs(n){ return n==null||n===0?'—':'Gs. '+Math.round(Number(n)).toLocaleString('es-PY'); }
 function fmtM(n){ const v=Number(n); if(v>=1e6) return (v/1e6).toFixed(1)+'M'; if(v>=1e3) return (v/1e3).toFixed(0)+'K'; return fmt(n); }
 function pct(o,c){ if(!o||o===0) return {t:'',c:''}; const p=((c-o)/o*100).toFixed(1); return {t:(p>0?'+':'')+p+'%', c:p>=0?'up':'down'}; }
+function safeDiv(n,d){ return d? (n/d) : 0; }
+
+function ageLower(label){
+    const s=String(label||'').toLowerCase();
+    const m=s.match(/(\d+)\s*a\s*\d+/);
+    if(m) return Number(m[1]);
+    const m2=s.match(/(\d+)\s*(?:y\s*m[aá]s|\+)/);
+    if(m2) return Number(m2[1]);
+    return null;
+}
+function ageMid(label){
+    const s=String(label||'').toLowerCase();
+    const m=s.match(/(\d+)\s*a\s*(\d+)/);
+    if(m) return (Number(m[1])+Number(m[2]))/2;
+    const lb=ageLower(s);
+    if(lb!=null) return lb + 2.5; // sup. tramo abierto ~5 años
+    return null;
+}
+function ageStats(items){
+    let tot=0, sum=0, tot55=0;
+    (items||[]).forEach(e=>{
+        const t=Number(e.total || (Number(e.hombres||0)+Number(e.mujeres||0)) || 0);
+        const mid=ageMid(e.grupo);
+        const lb=ageLower(e.grupo);
+        if(t>0){
+            tot += t;
+            if(mid!=null) sum += mid*t;
+            if(lb!=null && lb>=55) tot55 += t;
+        }
+    });
+    return {total: tot, avg: safeDiv(sum, tot), share55: safeDiv(tot55, tot)};
+}
+function payGapActivos(c){
+    const counts=c?.activos_edad;
+    const sal=c?.salario_edad;
+    if(!counts?.length || !sal?.length) return null;
+    const salBy={};
+    sal.forEach(e=>{ if(e?.grupo) salBy[e.grupo]=e; });
+    let sumH=0, sumM=0, cntH=0, cntM=0;
+    counts.forEach(e=>{
+        const s=salBy[e.grupo];
+        if(!s) return;
+        const hC=Number(e.hombres||0), mC=Number(e.mujeres||0);
+        const hS=Number(s.hombres||0), mS=Number(s.mujeres||0);
+        if(hC>0 && hS>0){ sumH += hC*hS; cntH += hC; }
+        if(mC>0 && mS>0){ sumM += mC*mS; cntM += mC; }
+    });
+    const avgH=safeDiv(sumH, cntH);
+    const avgM=safeDiv(sumM, cntM);
+    const ratio=avgH>0? (avgM/avgH) : 0;
+    return {avgH, avgM, ratio};
+}
 
 // Layout defaults
 const LO = {
@@ -681,6 +738,10 @@ Object.values(D).forEach(c=>{
     totA24+=Number(c.activos?.['2024']||0); totP24+=Number(c.pasivos?.['2024']||0);
     totA23+=Number(c.activos?.['2023']||0); totP23+=Number(c.pasivos?.['2023']||0);
 });
+const ipsA24 = Number(D['IPS']?.activos?.['2024'] || 0);
+const ipsP24 = Number(D['IPS']?.pasivos?.['2024'] || 0);
+const ipsAShare = totA24 > 0 ? (ipsA24 / totA24 * 100) : 0;
+const ipsPShare = totP24 > 0 ? (ipsP24 / totP24 * 100) : 0;
 
 // HERO KPIs
 document.getElementById('heroKpis').innerHTML = `
@@ -726,19 +787,25 @@ const M = document.getElementById('mainContent');
     const chA=pct(totA23,totA24), chP=pct(totP23,totP24);
     s.innerHTML=`
     <div class="sec-header"><h2>Resumen General del Sistema Previsional</h2><p>Visión consolidada de todas las cajas — Datos a diciembre 2024</p></div>
-    <div class="kpi-row">
-        <div class="kpi"><div class="kpi-icon navy"><i class="fas fa-user-tie"></i></div><div class="kpi-lbl">Cotizantes Activos</div><div class="kpi-val">${fmt(totA24)}</div><div class="kpi-sub ${chA.c}"><i class="fas fa-arrow-trend-${chA.c==='up'?'up':'down'}"></i> ${chA.t} vs 2023</div></div>
-        <div class="kpi red"><div class="kpi-icon red"><i class="fas fa-user-clock"></i></div><div class="kpi-lbl">Jubilados/Pensionados</div><div class="kpi-val">${fmt(totP24)}</div><div class="kpi-sub ${chP.c}"><i class="fas fa-arrow-trend-${chP.c==='up'?'up':'down'}"></i> ${chP.t} vs 2023</div></div>
-        <div class="kpi teal"><div class="kpi-icon teal"><i class="fas fa-scale-balanced"></i></div><div class="kpi-lbl">Relación Activos/Pasivos</div><div class="kpi-val">${(totA24/totP24).toFixed(2)}</div><div class="kpi-sub">activos por cada pasivo</div></div>
-        <div class="kpi cyan"><div class="kpi-icon cyan"><i class="fas fa-users"></i></div><div class="kpi-lbl">Beneficiarios Totales</div><div class="kpi-val">${fmt(totA24+totP24)}</div><div class="kpi-sub">en 8 cajas previsionales</div></div>
-    </div>
-    <div class="grid g2">
-        <div class="card"><div class="card-head"><h3>Distribución de Cotizantes Activos</h3><div class="tag">2024</div></div><div class="card-body" id="r-pie1"></div></div>
-        <div class="card"><div class="card-head"><h3>Distribución de Jubilados/Pensionados</h3><div class="tag red">2024</div></div><div class="card-body" id="r-pie2"></div></div>
-    </div>
-    <div class="grid g1">
-        <div class="card"><div class="card-head"><h3>Activos vs Pasivos por Caja Previsional</h3><div class="tag">2024</div></div><div class="card-sub">Comparación absoluta entre cotizantes y beneficiarios</div><div class="card-body" id="r-bar1"></div></div>
-    </div>`;
+	    <div class="kpi-row">
+	        <div class="kpi"><div class="kpi-icon navy"><i class="fas fa-user-tie"></i></div><div class="kpi-lbl">Cotizantes Activos</div><div class="kpi-val">${fmt(totA24)}</div><div class="kpi-sub ${chA.c}"><i class="fas fa-arrow-trend-${chA.c==='up'?'up':'down'}"></i> ${chA.t} vs 2023</div></div>
+	        <div class="kpi red"><div class="kpi-icon red"><i class="fas fa-user-clock"></i></div><div class="kpi-lbl">Jubilados/Pensionados</div><div class="kpi-val">${fmt(totP24)}</div><div class="kpi-sub ${chP.c}"><i class="fas fa-arrow-trend-${chP.c==='up'?'up':'down'}"></i> ${chP.t} vs 2023</div></div>
+	        <div class="kpi teal"><div class="kpi-icon teal"><i class="fas fa-scale-balanced"></i></div><div class="kpi-lbl">Relación Activos/Pasivos</div><div class="kpi-val">${(totA24/totP24).toFixed(2)}</div><div class="kpi-sub">activos por cada pasivo</div></div>
+	        <div class="kpi cyan"><div class="kpi-icon cyan"><i class="fas fa-users"></i></div><div class="kpi-lbl">Beneficiarios Totales</div><div class="kpi-val">${fmt(totA24+totP24)}</div><div class="kpi-sub">en 8 cajas previsionales</div></div>
+	        <div class="kpi teal"><div class="kpi-icon teal"><i class="fas fa-building-columns"></i></div><div class="kpi-lbl">IPS — Activos</div><div class="kpi-val">${fmt(ipsA24)}</div><div class="kpi-sub">${ipsAShare.toFixed(1)}% del total de activos</div></div>
+	        <div class="kpi red"><div class="kpi-icon red"><i class="fas fa-building-columns"></i></div><div class="kpi-lbl">IPS — Pasivos</div><div class="kpi-val">${fmt(ipsP24)}</div><div class="kpi-sub">${ipsPShare.toFixed(1)}% del total de pasivos</div></div>
+	    </div>
+	    <div class="grid g2">
+	        <div class="card"><div class="card-head"><h3>Distribución de Cotizantes Activos</h3><div class="tag">2024</div></div><div class="card-body" id="r-pie1"></div></div>
+	        <div class="card"><div class="card-head"><h3>Distribución de Jubilados/Pensionados</h3><div class="tag red">2024</div></div><div class="card-body" id="r-pie2"></div></div>
+		    </div>
+			    <div class="grid g1">
+			        <div class="card"><div class="card-head"><h3>Activos vs Pasivos por Caja Previsional</h3><div class="tag">2024</div></div><div class="card-sub">Comparación absoluta entre cotizantes y beneficiarios</div><div class="card-body" id="r-bar1"></div></div>
+			    </div>
+			    <div class="grid g2">
+			        <div class="card"><div class="card-head"><h3>IPS: Participación en el Sistema</h3><div class="tag">2024</div></div><div class="card-sub">Cuotas de IPS sobre el total (activos y pasivos)</div><div class="card-body" id="r-ips"></div></div>
+			        <div class="card"><div class="card-head"><h3>Hallazgos Rápidos</h3><div class="tag red">2024</div></div><div class="card-sub">Indicadores destacados generados automáticamente</div><div class="card-body" id="r-ins"></div></div>
+			    </div>`;
     M.appendChild(s);
 
     setTimeout(()=>{
@@ -749,12 +816,52 @@ const M = document.getElementById('mainContent');
         Plotly.newPlot('r-pie1',[{values:a24,labels:cn,type:'pie',hole:0.52,marker:{colors:cc,line:{color:'white',width:2}},textinfo:'percent',textposition:'inside',textfont:{size:12,color:'white'},hovertemplate:'<b>%{label}</b><br>%{value:,.0f} activos<br>%{percent}<extra></extra>',sort:false,direction:'clockwise',pull:cn.map((_,i)=>i===0?0.03:0)}],{...pieL,annotations:[{text:'<b>Activos</b>',showarrow:false,font:{size:14,color:C.navy}}]},CFG);
         Plotly.newPlot('r-pie2',[{values:p24,labels:cn,type:'pie',hole:0.52,marker:{colors:cc,line:{color:'white',width:2}},textinfo:'percent',textposition:'inside',textfont:{size:12,color:'white'},hovertemplate:'<b>%{label}</b><br>%{value:,.0f} pasivos<br>%{percent}<extra></extra>',sort:false,direction:'clockwise'}],{...pieL,annotations:[{text:'<b>Pasivos</b>',showarrow:false,font:{size:14,color:C.red}}]},CFG);
 
-        Plotly.newPlot('r-bar1',[
-            {x:cn,y:a24,name:'Cotizantes Activos',type:'bar',marker:{color:cn.map(c=>CAJA_C[c]),line:{width:0}},hovertemplate:'<b>%{x}</b><br>Activos: %{y:,.0f}<extra></extra>',text:a24.map(v=>fmtM(v)),textposition:'outside',textfont:{size:11,color:C.navy}},
-            {x:cn,y:p24,name:'Jubilados/Pensionados',type:'bar',marker:{color:cn.map(c=>CAJA_C2[c]),line:{width:0}},hovertemplate:'<b>%{x}</b><br>Pasivos: %{y:,.0f}<extra></extra>',text:p24.map(v=>fmtM(v)),textposition:'outside',textfont:{size:11,color:C.red}}
-        ],{...LO,barmode:'group',bargap:0.25,bargroupgap:0.08,height:420,margin:{...LO.margin,b:80,t:36}},CFG);
-    },50);
-}();
+	        Plotly.newPlot('r-bar1',[
+	            {x:cn,y:a24,name:'Cotizantes Activos',type:'bar',marker:{color:cn.map(c=>CAJA_C[c]),line:{width:0}},hovertemplate:'<b>%{x}</b><br>Activos: %{y:,.0f}<extra></extra>',text:a24.map(v=>fmtM(v)),textposition:'outside',textfont:{size:11,color:C.navy}},
+	            {x:cn,y:p24,name:'Jubilados/Pensionados',type:'bar',marker:{color:cn.map(c=>CAJA_C2[c]),line:{width:0}},hovertemplate:'<b>%{x}</b><br>Pasivos: %{y:,.0f}<extra></extra>',text:p24.map(v=>fmtM(v)),textposition:'outside',textfont:{size:11,color:C.red}}
+	        ],{...LO,barmode:'group',bargap:0.25,bargroupgap:0.08,height:420,margin:{...LO.margin,b:80,t:36}},CFG);
+
+	        // IPS: cuotas sobre el total del sistema
+	        const restA = Math.max(0, totA24 - ipsA24);
+	        const restP = Math.max(0, totP24 - ipsP24);
+	        Plotly.newPlot('r-ips',[
+	            {values:[ipsA24,restA],labels:['IPS','Resto'],type:'pie',hole:0.55,domain:{x:[0,0.48],y:[0,1]},
+	             marker:{colors:[C.navy,'rgba(29,67,84,0.14)'],line:{color:'white',width:2}},
+	             textinfo:'percent',textposition:'inside',textfont:{size:12,color:'white'},
+	             hovertemplate:'<b>%{label}</b><br>%{value:,.0f}<br>%{percent}<extra></extra>',sort:false},
+	            {values:[ipsP24,restP],labels:['IPS','Resto'],type:'pie',hole:0.55,domain:{x:[0.52,1],y:[0,1]},
+	             marker:{colors:[C.red,'rgba(234,36,36,0.14)'],line:{color:'white',width:2}},
+	             textinfo:'percent',textposition:'inside',textfont:{size:12,color:'white'},
+	             hovertemplate:'<b>%{label}</b><br>%{value:,.0f}<br>%{percent}<extra></extra>',sort:false}
+	        ],{...pieL,annotations:[
+	            {x:0.24,y:0.5,text:`<b>Activos</b><br>${fmt(ipsA24)}<br><span style="color:${C.gray}">${ipsAShare.toFixed(1)}%</span>`,showarrow:false,font:{size:12,color:C.navy}},
+	            {x:0.76,y:0.5,text:`<b>Pasivos</b><br>${fmt(ipsP24)}<br><span style="color:${C.gray}">${ipsPShare.toFixed(1)}%</span>`,showarrow:false,font:{size:12,color:C.red}}
+	        ]},CFG);
+
+	        // Hallazgos automáticos
+	        const topAct = cn.map((c,i)=>({c,v:a24[i]})).sort((a,b)=>b.v-a.v)[0];
+	        const topFem = cn.map(c=>{
+	            const h=Number(D[c].por_sexo?.activos?.Hombres?.['2024']||0);
+	            const m=Number(D[c].por_sexo?.activos?.Mujeres?.['2024']||0);
+	            const t=h+m;
+	            return t?{c,p:m/t*100}:null;
+	        }).filter(Boolean).sort((a,b)=>b.p-a.p)[0];
+	        const oldest = cn.map(c=>{
+	            const st=ageStats(D[c].activos_edad);
+	            return st.total?{c,avg:st.avg,share55:st.share55*100}:null;
+	        }).filter(Boolean).sort((a,b)=>b.avg-a.avg)[0];
+	        const worstRatio = cn.map((c,i)=>({c,r:(p24[i]>0)?(a24[i]/p24[i]):null})).filter(o=>o.r!=null).sort((a,b)=>a.r-b.r)[0];
+	        const bestRR = cn.map(c=>{const r=Number(D[c].salarios?.['2024']?.ratio||0); return r?{c,r:r*100}:null;}).filter(Boolean).sort((a,b)=>b.r-a.r)[0];
+
+	        const insights=[];
+	        if(topAct) insights.push(`<strong>${topAct.c}</strong> concentra ${((topAct.v/totA24)*100).toFixed(1)}% de los activos (${fmt(topAct.v)}).`);
+	        if(topFem) insights.push(`Mayor participación femenina en activos: <strong>${topFem.c}</strong> (${topFem.p.toFixed(1)}% mujeres).`);
+	        if(oldest) insights.push(`Estructura de activos más envejecida: <strong>${oldest.c}</strong> (edad promedio estimada ${oldest.avg.toFixed(1)}; ${oldest.share55.toFixed(1)}% tiene 55+).`);
+	        if(worstRatio) insights.push(`Relación Activos/Pasivos más baja (2024): <strong>${worstRatio.c}</strong> (${worstRatio.r.toFixed(2)}).`);
+	        if(bestRR) insights.push(`Mayor tasa de reemplazo promedio (2024): <strong>${bestRR.c}</strong> (${bestRR.r.toFixed(1)}%).`);
+	        document.getElementById('r-ins').innerHTML = `<div style="padding: 10px 16px 6px"><ul class="ins-list">${insights.map(t=>`<li>${t}</li>`).join('')}</ul></div>`;
+	    },50);
+	}();
 
 // ======================== SEC: EVOLUCION ========================
 !function(){
@@ -814,13 +921,14 @@ const M = document.getElementById('mainContent');
             <div class="kpi red"><div class="kpi-icon red"><i class="fas fa-user-clock"></i></div><div class="kpi-lbl">Pasivos 2024</div><div class="kpi-val">${fmt(p24)}</div></div>
             <div class="kpi teal"><div class="kpi-icon teal"><i class="fas fa-scale-balanced"></i></div><div class="kpi-lbl">Relación A/P</div><div class="kpi-val">${rel}</div></div>
             ${c.salarios?.['2024']?`<div class="kpi cyan"><div class="kpi-icon cyan"><i class="fas fa-money-bill-wave"></i></div><div class="kpi-lbl">Salario Promedio</div><div class="kpi-val" style="font-size:18px">${fmtGs(c.salarios['2024'].salario_activo)}</div></div>`:''}
-        </div>
-        <div class="grid g2">
-            <div class="card"><div class="card-head"><h3>Evolución Activos y Pasivos</h3></div><div class="card-body" id="cd-evo"></div></div>
-            <div class="card"><div class="card-head"><h3>Pasivos por Tipo de Beneficio</h3><div class="tag">2024</div></div><div class="card-body" id="cd-tipo"></div></div>
-        </div>
-        ${c.activos_edad?.length?`<div class="grid g1"><div class="card"><div class="card-head"><h3>Cotizantes Activos por Grupo de Edad y Sexo</h3></div><div class="card-body" id="cd-age"></div></div></div>`:''}
-        ${c.monto_vejez_edad?.length?`<div class="grid g1"><div class="card"><div class="card-head"><h3>Monto Promedio Jubilación por Vejez según Edad y Sexo</h3><div class="tag">Guaraníes</div></div><div class="card-body" id="cd-montoVejez"></div></div></div>`:''}`;
+	        </div>
+	        <div class="grid g2">
+	            <div class="card"><div class="card-head"><h3>Evolución Activos y Pasivos</h3></div><div class="card-body" id="cd-evo"></div></div>
+	            <div class="card"><div class="card-head"><h3>Pasivos por Tipo de Beneficio</h3><div class="tag">2024</div></div><div class="card-body" id="cd-tipo"></div></div>
+	        </div>
+	        ${c.activos_edad?.length?`<div class="grid g1"><div class="card"><div class="card-head"><h3>Cotizantes Activos por Grupo de Edad y Sexo</h3></div><div class="card-body" id="cd-age"></div></div></div>`:''}
+	        ${c.salario_edad?.length?`<div class="grid g1"><div class="card"><div class="card-head"><h3>Salario Promedio del Cotizante Activo según Edad y Sexo</h3><div class="tag">Guaraníes</div></div><div class="card-body" id="cd-salEdad"></div></div></div>`:''}
+	        ${c.monto_vejez_edad?.length?`<div class="grid g1"><div class="card"><div class="card-head"><h3>Monto Promedio Jubilación por Vejez según Edad y Sexo</h3><div class="tag">Guaraníes</div></div><div class="card-body" id="cd-montoVejez"></div></div></div>`:''}`;
 
         // Evo chart
         Plotly.newPlot('cd-evo',[
@@ -840,19 +948,31 @@ const M = document.getElementById('mainContent');
             }],{margin:{t:8,b:8,l:8,r:8},height:LO.height,paper_bgcolor:'rgba(0,0,0,0)',font:{family:'DM Sans'},showlegend:false},CFG);
         }
 
-        // Age pyramid activos
-        if(c.activos_edad?.length && document.getElementById('cd-age')){
-            const g=c.activos_edad.map(e=>e.grupo);
-            Plotly.newPlot('cd-age',[
-                {x:g,y:c.activos_edad.map(e=>e.hombres),name:'Hombres',type:'bar',marker:{color:C.navy,line:{width:0}},hovertemplate:'Hombres: %{y:,.0f}<extra></extra>'},
-                {x:g,y:c.activos_edad.map(e=>e.mujeres),name:'Mujeres',type:'bar',marker:{color:C.red,line:{width:0}},hovertemplate:'Mujeres: %{y:,.0f}<extra></extra>'}
-            ],{...LO,barmode:'group',bargap:0.2,height:400,xaxis:{...LO.xaxis,tickangle:-45}},CFG);
-        }
+	        // Age pyramid activos
+	        if(c.activos_edad?.length && document.getElementById('cd-age')){
+	            const g=c.activos_edad.map(e=>e.grupo);
+	            Plotly.newPlot('cd-age',[
+	                {x:g,y:c.activos_edad.map(e=>e.hombres),name:'Hombres',type:'bar',marker:{color:C.navy,line:{width:0}},hovertemplate:'Hombres: %{y:,.0f}<extra></extra>'},
+	                {x:g,y:c.activos_edad.map(e=>e.mujeres),name:'Mujeres',type:'bar',marker:{color:C.red,line:{width:0}},hovertemplate:'Mujeres: %{y:,.0f}<extra></extra>'}
+	            ],{...LO,barmode:'group',bargap:0.2,height:400,xaxis:{...LO.xaxis,tickangle:-45}},CFG);
+	        }
 
-        // Monto vejez por edad
-        if(c.monto_vejez_edad?.length && document.getElementById('cd-montoVejez')){
-            const g=c.monto_vejez_edad.map(e=>e.grupo);
-            Plotly.newPlot('cd-montoVejez',[
+	        // Salario por edad y sexo (activos)
+	        if(c.salario_edad?.length && document.getElementById('cd-salEdad')){
+	            const g=c.salario_edad.map(e=>e.grupo);
+	            const cntBy={}; (c.activos_edad||[]).forEach(e=>cntBy[e.grupo]=e);
+	            const yH=c.salario_edad.map(e=>Number(cntBy[e.grupo]?.hombres||0)>0?Number(e.hombres||0):null);
+	            const yM=c.salario_edad.map(e=>Number(cntBy[e.grupo]?.mujeres||0)>0?Number(e.mujeres||0):null);
+	            Plotly.newPlot('cd-salEdad',[
+	                {x:g,y:yH,name:'Hombres',type:'scatter',mode:'lines+markers',line:{color:C.navy,width:3,shape:'spline',smoothing:1.15},marker:{size:7},hovertemplate:'Hombres: Gs. %{y:,.0f}<extra></extra>'},
+	                {x:g,y:yM,name:'Mujeres',type:'scatter',mode:'lines+markers',line:{color:C.red,width:3,shape:'spline',smoothing:1.15},marker:{size:7},hovertemplate:'Mujeres: Gs. %{y:,.0f}<extra></extra>'}
+	            ],{...LO,height:420,xaxis:{...LO.xaxis,tickangle:-45},yaxis:{...LO.yaxis,title:{text:'Guaraníes',font:{size:12}}},margin:{...LO.margin,b:90}},CFG);
+	        }
+
+	        // Monto vejez por edad
+	        if(c.monto_vejez_edad?.length && document.getElementById('cd-montoVejez')){
+	            const g=c.monto_vejez_edad.map(e=>e.grupo);
+	            Plotly.newPlot('cd-montoVejez',[
                 {x:g,y:c.monto_vejez_edad.map(e=>e.hombres),name:'Hombres',type:'bar',marker:{color:C.navy},hovertemplate:'Hombres: %{y:,.0f} Gs.<extra></extra>'},
                 {x:g,y:c.monto_vejez_edad.map(e=>e.mujeres),name:'Mujeres',type:'bar',marker:{color:C.red},hovertemplate:'Mujeres: %{y:,.0f} Gs.<extra></extra>'}
             ],{...LO,barmode:'group',bargap:0.2,height:400,xaxis:{...LO.xaxis,tickangle:-45},yaxis:{...LO.yaxis,title:{text:'Guaraníes',font:{size:12}}}},CFG);
@@ -861,62 +981,112 @@ const M = document.getElementById('mainContent');
     setTimeout(()=>selCaja(cn[0],document.querySelector('#s-cajas .pill')),150);
 }();
 
-// ======================== SEC: GENERO ========================
-!function(){
-    const s=document.createElement('div'); s.id='s-genero'; s.className='section';
-    s.innerHTML=`
-    <div class="sec-header"><h2>Análisis por Género</h2><p>Distribución de hombres y mujeres en el sistema previsional</p></div>
-    <div class="grid g2">
-        <div class="card"><div class="card-head"><h3>Activos por Sexo — Todas las Cajas</h3><div class="tag">2024</div></div><div class="card-body" id="g-act"></div></div>
-        <div class="card"><div class="card-head"><h3>Pasivos por Sexo — Todas las Cajas</h3><div class="tag">2024</div></div><div class="card-body" id="g-pas"></div></div>
-    </div>
-    <div class="grid g1">
-        <div class="card"><div class="card-head"><h3>Participación Femenina en Cotizantes Activos por Caja</h3><div class="tag">% Mujeres 2024</div></div><div class="card-sub">La línea punteada indica paridad de género (50%)</div><div class="card-body" id="g-brecha"></div></div>
-    </div>
-    <div class="grid g1">
-        <div class="card"><div class="card-head"><h3>Evolución de la Participación Femenina en Activos</h3></div><div class="card-sub">Porcentaje de mujeres sobre el total de cotizantes activos por caja</div><div class="card-body" id="g-evo"></div></div>
-    </div>`;
-    M.appendChild(s);
+	// ======================== SEC: GENERO ========================
+	!function(){
+	    const s=document.createElement('div'); s.id='s-genero'; s.className='section';
+	    s.innerHTML=`
+	    <div class="sec-header"><h2>Análisis por Género</h2><p>Distribución de hombres y mujeres en el sistema previsional</p></div>
+	    <div class="pill-row">${YRS.map((y,i)=>`<button class="pill${y==='2024'?' on':''}" onclick="selGenYear('${y}',this)">${y}</button>`).join('')}</div>
+	    <div class="grid g2">
+	        <div class="card"><div class="card-head"><h3>Activos por Sexo — Todas las Cajas</h3></div><div class="card-body" id="g-act"></div></div>
+	        <div class="card"><div class="card-head"><h3>Pasivos por Sexo — Todas las Cajas</h3></div><div class="card-body" id="g-pas"></div></div>
+	    </div>
+	    <div class="grid g2">
+	        <div class="card"><div class="card-head"><h3>Participación Femenina en Activos por Caja</h3><div class="tag">% Mujeres</div></div><div class="card-sub">La línea punteada indica paridad de género (50%)</div><div class="card-body" id="g-brecha"></div></div>
+	        <div class="card"><div class="card-head"><h3>Participación Femenina en Pasivos por Caja</h3><div class="tag red">% Mujeres</div></div><div class="card-sub">La línea punteada indica paridad de género (50%)</div><div class="card-body" id="g-brecha-pas"></div></div>
+	    </div>
+	    <div class="grid g1">
+	        <div class="card"><div class="card-head"><h3>Brecha Salarial de Género (Activos)</h3><div class="tag">Mujeres/Hombres</div></div><div class="card-sub">Salario promedio ponderado por edad (última tabla disponible)</div><div class="card-body" id="g-sal-gap"></div></div>
+	    </div>
+	    <div class="grid g1">
+	        <div class="card"><div class="card-head"><h3>Evolución de la Participación Femenina en Activos</h3></div><div class="card-sub">Porcentaje de mujeres sobre el total de cotizantes activos por caja</div><div class="card-body" id="g-evo"></div></div>
+	    </div>`;
+	    M.appendChild(s);
 
-    setTimeout(()=>{
-        const cn=Object.keys(D).filter(c=>D[c].por_sexo?.activos?.Hombres);
-        const hA=cn.map(c=>Number(D[c].por_sexo?.activos?.Hombres?.['2024']||0));
-        const mA=cn.map(c=>Number(D[c].por_sexo?.activos?.Mujeres?.['2024']||0));
-        const hP=cn.map(c=>Number(D[c].por_sexo?.pasivos?.Hombres?.['2024']||0));
-        const mP=cn.map(c=>Number(D[c].por_sexo?.pasivos?.Mujeres?.['2024']||0));
+	    setTimeout(()=>{
+	        const cn=Object.keys(D).filter(c=>D[c].por_sexo?.activos?.Hombres);
 
-        const stackL={...LO,barmode:'stack',bargap:0.35,height:400,xaxis:{...LO.xaxis,tickangle:-30},margin:{...LO.margin,b:90}};
-        Plotly.newPlot('g-act',[
-            {x:cn,y:hA,name:'Hombres',type:'bar',marker:{color:C.navy},hovertemplate:'%{y:,.0f}<extra>Hombres</extra>'},
-            {x:cn,y:mA,name:'Mujeres',type:'bar',marker:{color:C.red},hovertemplate:'%{y:,.0f}<extra>Mujeres</extra>'}
-        ],stackL,CFG);
-        Plotly.newPlot('g-pas',[
-            {x:cn,y:hP,name:'Hombres',type:'bar',marker:{color:C.navy},hovertemplate:'%{y:,.0f}<extra>Hombres</extra>'},
-            {x:cn,y:mP,name:'Mujeres',type:'bar',marker:{color:C.red},hovertemplate:'%{y:,.0f}<extra>Mujeres</extra>'}
-        ],stackL,CFG);
+	        const stackL={...LO,barmode:'stack',bargap:0.35,height:400,xaxis:{...LO.xaxis,tickangle:-30},margin:{...LO.margin,b:90}};
 
-        // Brecha
-        const pctM=cn.map((c,i)=>{const t=hA[i]+mA[i]; return t>0?(mA[i]/t*100):0;});
-        Plotly.newPlot('g-brecha',[{
-            x:cn, y:pctM, type:'bar',
-            marker:{color:pctM.map(p=>p>=50?C.red:C.navy),line:{width:0}},
-            text:pctM.map(p=>p.toFixed(1)+'%'), textposition:'outside', textfont:{size:12,weight:700},
-            hovertemplate:'<b>%{x}</b><br>%{y:.1f}% mujeres<extra></extra>'
-        }],{...LO,height:380,yaxis:{...LO.yaxis,range:[0,Math.max(...pctM)*1.2],title:{text:'% Mujeres'}},shapes:[{type:'line',x0:-0.5,x1:cn.length-0.5,y0:50,y1:50,line:{color:C.red,width:2,dash:'dash'}}],annotations:[{x:cn.length-1,y:51.5,text:'<b>Paridad</b>',showarrow:false,font:{size:11,color:C.red}}],margin:{...LO.margin,b:80}},CFG);
+	        window.selGenYear=function(year,btn){
+	            document.querySelectorAll('#s-genero .pill').forEach(b=>b.classList.remove('on'));
+	            if(btn) btn.classList.add('on');
 
-        // Evo femenina
-        const evoT=cn.map(c=>({
-            x:YRS,
-            y:YRS.map(y=>{
+	            const hA=cn.map(c=>Number(D[c].por_sexo?.activos?.Hombres?.[year]||0));
+	            const mA=cn.map(c=>Number(D[c].por_sexo?.activos?.Mujeres?.[year]||0));
+	            const hP=cn.map(c=>Number(D[c].por_sexo?.pasivos?.Hombres?.[year]||0));
+	            const mP=cn.map(c=>Number(D[c].por_sexo?.pasivos?.Mujeres?.[year]||0));
+
+	            Plotly.newPlot('g-act',[
+	                {x:cn,y:hA,name:'Hombres',type:'bar',marker:{color:C.navy},hovertemplate:'%{y:,.0f}<extra>Hombres</extra>'},
+	                {x:cn,y:mA,name:'Mujeres',type:'bar',marker:{color:C.red},hovertemplate:'%{y:,.0f}<extra>Mujeres</extra>'}
+	            ],stackL,CFG);
+	            Plotly.newPlot('g-pas',[
+	                {x:cn,y:hP,name:'Hombres',type:'bar',marker:{color:C.navy},hovertemplate:'%{y:,.0f}<extra>Hombres</extra>'},
+	                {x:cn,y:mP,name:'Mujeres',type:'bar',marker:{color:C.red},hovertemplate:'%{y:,.0f}<extra>Mujeres</extra>'}
+	            ],stackL,CFG);
+
+	            // Participación femenina (activos/pasivos)
+	            const pctMA=cn.map((c,i)=>{const t=hA[i]+mA[i]; return t>0?(mA[i]/t*100):0;});
+	            const pctMP=cn.map((c,i)=>{const t=hP[i]+mP[i]; return t>0?(mP[i]/t*100):0;});
+	            const yMaxA=Math.max(60, Math.max(...pctMA)*1.2);
+	            const yMaxP=Math.max(60, Math.max(...pctMP)*1.2);
+	            const commonBrecha=(pctVals, yMax, color)=>({
+	                data:[{
+	                    x:cn, y:pctVals, type:'bar',
+	                    marker:{color:pctVals.map(p=>p>=50?C.red:C.navy),line:{width:0}},
+	                    text:pctVals.map(p=>p.toFixed(1)+'%'), textposition:'outside', textfont:{size:12,weight:700},
+	                    hovertemplate:'<b>%{x}</b><br>%{y:.1f}% mujeres<extra></extra>'
+	                }],
+	                layout:{...LO,height:360,yaxis:{...LO.yaxis,range:[0,yMax],title:{text:'% Mujeres'}},
+	                    shapes:[{type:'line',x0:-0.5,x1:cn.length-0.5,y0:50,y1:50,line:{color,width:2,dash:'dash'}}],
+	                    annotations:[{x:cn.length-1,y:51.5,text:'<b>Paridad</b>',showarrow:false,font:{size:11,color}}],
+	                    margin:{...LO.margin,b:86}}
+	            });
+	            const ba=commonBrecha(pctMA, yMaxA, C.red);
+	            const bp=commonBrecha(pctMP, yMaxP, C.red);
+	            Plotly.newPlot('g-brecha',ba.data,ba.layout,CFG);
+	            Plotly.newPlot('g-brecha-pas',bp.data,bp.layout,CFG);
+	        };
+
+	        // Brecha salarial por caja (activos)
+	        const gaps=Object.keys(D).map(c=>{
+	            const g=payGapActivos(D[c]);
+	            return (g && g.ratio>0)?{c,p:g.ratio*100,avgH:g.avgH,avgM:g.avgM}:null;
+	        }).filter(Boolean);
+	        if(gaps.length){
+	            const yMax=Math.max(110, Math.max(...gaps.map(g=>g.p))*1.2);
+	            Plotly.newPlot('g-sal-gap',[{
+	                x:gaps.map(g=>g.c), y:gaps.map(g=>g.p), type:'bar',
+	                marker:{color:gaps.map(g=>g.p>=100?C.teal:C.red),line:{width:0}},
+	                text:gaps.map(g=>g.p.toFixed(1)+'%'), textposition:'outside', textfont:{size:12,weight:700},
+	                customdata:gaps.map(g=>[g.avgM,g.avgH]),
+	                hovertemplate:'<b>%{x}</b><br>Mujeres: Gs. %{customdata[0]:,.0f}<br>Hombres: Gs. %{customdata[1]:,.0f}<br>Ratio: %{y:.1f}%<extra></extra>'
+	            }],{...LO,height:380,yaxis:{...LO.yaxis,title:{text:'Mujeres como % del salario de hombres'},range:[0,yMax]},
+	                shapes:[{type:'line',x0:-0.5,x1:gaps.length-0.5,y0:100,y1:100,line:{color:C.gray,width:1.6,dash:'dot'}}],
+	                annotations:[{x:gaps[gaps.length-1].c,y:102,text:'<b>100%</b>',showarrow:false,font:{size:10,color:C.gray}}],
+	                margin:{...LO.margin,b:86}},CFG);
+	        } else {
+	            document.getElementById('g-sal-gap').innerHTML='<p style="padding:40px;color:#aaa;text-align:center">Sin datos de salarios por sexo/edad</p>';
+	        }
+
+	        // Evo femenina
+	        const evoT=cn.map(c=>({
+	            x:YRS,
+	            y:YRS.map(y=>{
                 const h=Number(D[c].por_sexo?.activos?.Hombres?.[y]||0);
                 const m=Number(D[c].por_sexo?.activos?.Mujeres?.[y]||0);
                 return (h+m)>0?(m/(h+m)*100):0;
             }),
             name:c, mode:'lines+markers', line:{color:CAJA_C[c],width:2.5,shape:'spline',smoothing:1.15}, marker:{size:7}
-        }));
-        Plotly.newPlot('g-evo',evoT,{...LO,height:380,yaxis:{...LO.yaxis,title:{text:'% Mujeres'},range:[0,70]},shapes:[{type:'line',x0:YRS[0],x1:YRS[4],y0:50,y1:50,line:{color:'#adb5bd',width:1.5,dash:'dot'}}]},CFG);
-    },200);
-}();
+	        }));
+	        Plotly.newPlot('g-evo',evoT,{...LO,height:380,yaxis:{...LO.yaxis,title:{text:'% Mujeres'},range:[0,70]},shapes:[{type:'line',x0:YRS[0],x1:YRS[4],y0:50,y1:50,line:{color:'#adb5bd',width:1.5,dash:'dot'}}]},CFG);
+
+	        // Init
+	        const initBtn=document.querySelector('#s-genero .pill-row .pill.on') || document.querySelector('#s-genero .pill-row .pill');
+	        if(initBtn) selGenYear('2024', initBtn);
+	    },200);
+	}();
 
 // ======================== SEC: PIRAMIDES ========================
 !function(){
@@ -925,10 +1095,14 @@ const M = document.getElementById('mainContent');
     s.innerHTML=`
     <div class="sec-header"><h2>Pirámides Poblacionales</h2><p>Estructura etaria de cotizantes activos y jubilados por vejez</p></div>
     <div class="pill-row">${cwe.map(([n],i)=>`<button class="pill${i===0?' on':''}" onclick="selPir('${n}',this)">${n}</button>`).join('')}</div>
-    <div class="grid g2">
-        <div class="card"><div class="card-head"><h3>Pirámide: Cotizantes Activos</h3><div class="tag">Por edad y sexo</div></div><div class="card-sub">Hombres (izquierda) — Mujeres (derecha)</div><div class="card-body" id="p-act"></div></div>
-        <div class="card"><div class="card-head"><h3>Pirámide: Jubilados por Vejez</h3><div class="tag red">Por edad y sexo</div></div><div class="card-sub">Hombres (izquierda) — Mujeres (derecha)</div><div class="card-body" id="p-vej"></div></div>
-    </div>`;
+	    <div class="grid g2">
+	        <div class="card"><div class="card-head"><h3>Pirámide: Cotizantes Activos</h3><div class="tag">Por edad y sexo</div></div><div class="card-sub">Hombres (izquierda) — Mujeres (derecha)</div><div class="card-body" id="p-act"></div></div>
+	        <div class="card"><div class="card-head"><h3>Pirámide: Jubilados por Vejez</h3><div class="tag red">Por edad y sexo</div></div><div class="card-sub">Hombres (izquierda) — Mujeres (derecha)</div><div class="card-body" id="p-vej"></div></div>
+	    </div>
+	    <div class="grid g2">
+	        <div class="card"><div class="card-head"><h3>Edad Promedio — Cotizantes Activos</h3><div class="tag">Estimación</div></div><div class="card-sub">Promedio ponderado por grupos de edad</div><div class="card-body" id="p-edadavg"></div></div>
+	        <div class="card"><div class="card-head"><h3>Índice de Envejecimiento — Activos 55+</h3><div class="tag red">% del total</div></div><div class="card-sub">Proporción de cotizantes en tramos 55–85+</div><div class="card-body" id="p-55plus"></div></div>
+	    </div>`;
     M.appendChild(s);
 
     window.selPir=function(name,btn){
@@ -961,11 +1135,34 @@ const M = document.getElementById('mainContent');
             },CFG);
         }
 
-        drawPyramid('p-act', c.activos_edad, C.navy, C.red);
-        drawPyramid('p-vej', c.vejez_edad, C.blue, C.pink);
-    };
-    if(cwe.length>0) setTimeout(()=>selPir(cwe[0][0],document.querySelector('#s-edades .pill')),250);
-}();
+	        drawPyramid('p-act', c.activos_edad, C.navy, C.red);
+	        drawPyramid('p-vej', c.vejez_edad, C.blue, C.pink);
+	    };
+	    if(cwe.length>0) setTimeout(()=>selPir(cwe[0][0],document.querySelector('#s-edades .pill')),250);
+
+	    // Indicadores demográficos (por caja)
+	    setTimeout(()=>{
+	        const cn=cwe.map(([n])=>n);
+	        const st=cn.map(n=>({n, s:ageStats(D[n].activos_edad)})).filter(o=>o.s.total);
+	        const names=st.map(o=>o.n);
+	        const avgs=st.map(o=>o.s.avg);
+	        const pct55=st.map(o=>o.s.share55*100);
+
+	        Plotly.newPlot('p-edadavg',[{
+	            x:names, y:avgs, type:'bar',
+	            marker:{color:names.map(n=>CAJA_C[n]||C.navy),line:{width:0}},
+	            text:avgs.map(v=>v.toFixed(1)), textposition:'outside', textfont:{size:12,weight:700},
+	            hovertemplate:'<b>%{x}</b><br>Edad promedio: %{y:.1f} años<extra></extra>'
+	        }],{...LO,height:360,yaxis:{...LO.yaxis,title:{text:'Años'},rangemode:'tozero'},margin:{...LO.margin,b:86}},CFG);
+
+	        Plotly.newPlot('p-55plus',[{
+	            x:names, y:pct55, type:'bar',
+	            marker:{color:pct55.map(p=>p>=20?C.red:p>=12?C.amber:C.teal),line:{width:0}},
+	            text:pct55.map(v=>v.toFixed(1)+'%'), textposition:'outside', textfont:{size:12,weight:700},
+	            hovertemplate:'<b>%{x}</b><br>55+ en activos: %{y:.1f}%<extra></extra>'
+	        }],{...LO,height:360,yaxis:{...LO.yaxis,title:{text:'% del total'},range:[0,Math.max(25,Math.max(...pct55)*1.25)]},margin:{...LO.margin,b:86}},CFG);
+	    },320);
+	}();
 
 // ======================== SEC: SALARIOS ========================
 !function(){
@@ -1013,27 +1210,30 @@ const M = document.getElementById('mainContent');
     },300);
 }();
 
-// ======================== SEC: TABLA COMPARATIVA ========================
-!function(){
-    const s=document.createElement('div'); s.id='s-tabla'; s.className='section';
-    const cn=Object.keys(D);
-    let rows='', tA=0, tP=0;
-    cn.forEach(n=>{
-        const c=D[n]; const a=Number(c.activos?.['2024']||0); const p=Number(c.pasivos?.['2024']||0);
-        const r=p>0?(a/p).toFixed(2):'—';
-        const sa=c.salarios?.['2024']?.salario_activo?fmtGs(c.salarios['2024'].salario_activo):'—';
-        const sj=c.salarios?.['2024']?.jubilacion_promedio?fmtGs(c.salarios['2024'].jubilacion_promedio):'—';
-        tA+=a; tP+=p;
-        rows+=`<tr><td>${n}</td><td>${fmt(a)}</td><td>${fmt(p)}</td><td>${r}</td><td>${sa}</td><td>${sj}</td></tr>`;
-    });
-    rows+=`<tr><td><strong>TOTAL SISTEMA</strong></td><td><strong>${fmt(tA)}</strong></td><td><strong>${fmt(tP)}</strong></td><td><strong>${(tA/tP).toFixed(2)}</strong></td><td>—</td><td>—</td></tr>`;
+	// ======================== SEC: TABLA COMPARATIVA ========================
+	!function(){
+	    const s=document.createElement('div'); s.id='s-tabla'; s.className='section';
+	    const cn=Object.keys(D);
+	    const tA=cn.reduce((s,n)=>s+Number(D[n].activos?.['2024']||0),0);
+	    const tP=cn.reduce((s,n)=>s+Number(D[n].pasivos?.['2024']||0),0);
+	    let rows='';
+	    cn.forEach(n=>{
+	        const c=D[n]; const a=Number(c.activos?.['2024']||0); const p=Number(c.pasivos?.['2024']||0);
+	        const r=p>0?(a/p).toFixed(2):'—';
+	        const sa=c.salarios?.['2024']?.salario_activo?fmtGs(c.salarios['2024'].salario_activo):'—';
+	        const sj=c.salarios?.['2024']?.jubilacion_promedio?fmtGs(c.salarios['2024'].jubilacion_promedio):'—';
+	        const pA=tA>0?(a/tA*100):0;
+	        const pP=tP>0?(p/tP*100):0;
+	        rows+=`<tr><td>${n}</td><td>${fmt(a)}</td><td>${pA.toFixed(1)}%</td><td>${fmt(p)}</td><td>${pP.toFixed(1)}%</td><td>${r}</td><td>${sa}</td><td>${sj}</td></tr>`;
+	    });
+	    rows+=`<tr><td><strong>TOTAL SISTEMA</strong></td><td><strong>${fmt(tA)}</strong></td><td><strong>100.0%</strong></td><td><strong>${fmt(tP)}</strong></td><td><strong>100.0%</strong></td><td><strong>${(tA/tP).toFixed(2)}</strong></td><td>—</td><td>—</td></tr>`;
 
     s.innerHTML=`
-    <div class="sec-header"><h2>Tabla Comparativa</h2><p>Datos consolidados a diciembre 2024</p></div>
-    <div class="card" style="overflow-x:auto"><div style="padding:24px">
-        <table class="tbl"><thead><tr><th>Caja Previsional</th><th>Activos</th><th>Pasivos</th><th>Relación A/P</th><th>Salario Prom. Activo</th><th>Jubilación Prom.</th></tr></thead>
-        <tbody>${rows}</tbody></table>
-    </div></div>
+	    <div class="sec-header"><h2>Tabla Comparativa</h2><p>Datos consolidados a diciembre 2024</p></div>
+	    <div class="card" style="overflow-x:auto"><div style="padding:24px">
+	        <table class="tbl"><thead><tr><th>Caja Previsional</th><th>Activos</th><th>% Activos</th><th>Pasivos</th><th>% Pasivos</th><th>Relación A/P</th><th>Salario Prom. Activo</th><th>Jubilación Prom.</th></tr></thead>
+	        <tbody>${rows}</tbody></table>
+	    </div></div>
     <div class="grid g1" style="margin-top:24px">
         <div class="card"><div class="card-head"><h3>Ranking de Sostenibilidad: Relación Activos/Pasivos</h3><div class="tag red">2024</div></div><div class="card-sub">Rojo = crítico (&lt;2) · Amarillo = atención (2–4) · Verde = saludable (&gt;4)</div><div class="card-body" id="t-rank"></div></div>
     </div>`;

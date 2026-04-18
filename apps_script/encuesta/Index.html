@@ -1,0 +1,1508 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <base target="_top" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Encuesta — MTESS</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&family=Source+Serif+4:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+    <style>
+      :root {
+        --mtess-red: #ea2424;
+        --mtess-red-dark: #c41e1e;
+        --mtess-navy: #1d4354;
+        --mtess-navy-deep: #122c38;
+        --mtess-cyan: #0693e3;
+        --mtess-teal: #34e2e4;
+        --bg: #f5f7fa;
+        --card: #ffffff;
+        --text: #1a2332;
+        --text-secondary: #5a6a7e;
+        --border: #e3e8ef;
+        --shadow-sm: 0 1px 3px rgba(29, 67, 84, 0.08);
+        --shadow: 0 4px 12px rgba(29, 67, 84, 0.1);
+        --shadow-lg: 0 12px 32px rgba(29, 67, 84, 0.12);
+        --radius: 12px;
+        --radius-lg: 16px;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: radial-gradient(1000px 420px at 12% -10%, rgba(52, 226, 228, 0.14), transparent 60%),
+          radial-gradient(900px 380px at 92% 8%, rgba(6, 147, 227, 0.12), transparent 55%),
+          radial-gradient(1000px 520px at 28% 115%, rgba(234, 36, 36, 0.08), transparent 60%), var(--bg);
+        background-attachment: fixed;
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        background: rgba(29, 67, 84, 0.06);
+        border: 1px solid rgba(29, 67, 84, 0.1);
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+
+      .topbar {
+        background: var(--mtess-navy-deep);
+        padding: 8px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        gap: 14px;
+      }
+      .topbar a {
+        color: var(--mtess-teal);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .hero {
+        background: linear-gradient(135deg, var(--mtess-navy-deep) 0%, var(--mtess-navy) 60%, #245e73 100%);
+        color: white;
+        padding: 0;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-inner {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 44px 26px 40px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 28px;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        top: -60%;
+        right: -15%;
+        width: 700px;
+        height: 700px;
+        background: radial-gradient(circle, rgba(52, 226, 228, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+      }
+      .hero-text h1 {
+        font-family: "Source Serif 4", Georgia, serif;
+        font-size: clamp(28px, 3.3vw, 44px);
+        font-weight: 700;
+        line-height: 1.15;
+        margin-bottom: 12px;
+      }
+      .hero-text h1 span {
+        color: var(--mtess-teal);
+      }
+      .hero-text p {
+        font-size: 15px;
+        opacity: 0.85;
+        max-width: 660px;
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--mtess-red);
+        padding: 5px 14px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 16px;
+      }
+      .hero-kpis {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        min-width: 240px;
+      }
+      .hero-kpi {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        text-align: center;
+      }
+      .hero-kpi .num {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--mtess-teal);
+        letter-spacing: -0.5px;
+      }
+      .hero-kpi .lbl {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        opacity: 0.65;
+        margin-top: 2px;
+      }
+      .red-stripe {
+        height: 4px;
+        background: linear-gradient(90deg, var(--mtess-red) 0%, var(--mtess-red-dark) 50%, var(--mtess-red) 100%);
+      }
+
+      .nav {
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-bottom: 1px solid rgba(227, 232, 239, 0.9);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: var(--shadow-sm);
+        display: none;
+      }
+      .nav-inner {
+        max-width: 1320px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        padding: 0 18px;
+        gap: 6px;
+      }
+      .nav-spacer {
+        flex: 1;
+      }
+      .nav-user {
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 700;
+        padding: 0 12px;
+        white-space: nowrap;
+      }
+      .nav-btn {
+        padding: 14px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        background: none;
+        border: none;
+        cursor: pointer;
+        white-space: nowrap;
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .nav-btn:hover {
+        color: var(--mtess-red);
+      }
+      .nav-btn.active {
+        color: var(--mtess-red);
+        border-bottom-color: var(--mtess-red);
+        background: linear-gradient(180deg, rgba(234, 36, 36, 0.1), transparent);
+      }
+      .nav-btn.danger {
+        color: rgba(234, 36, 36, 0.85);
+      }
+      .nav-btn.danger:hover {
+        color: var(--mtess-red);
+      }
+
+      .main {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 24px 18px 60px;
+      }
+      .view {
+        display: none;
+        animation: fadeUp 0.35s ease;
+      }
+      .view.active {
+        display: block;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .sec-header {
+        margin-bottom: 20px;
+        padding-bottom: 14px;
+        border-bottom: 2px solid var(--border);
+      }
+      .sec-header h2 {
+        font-family: "Source Serif 4", Georgia, serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--mtess-navy);
+      }
+      .sec-header p {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+      .g2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      @media (max-width: 980px) {
+        .hero-inner {
+          grid-template-columns: 1fr;
+        }
+        .hero-kpis {
+          grid-template-columns: repeat(2, 1fr);
+          min-width: 0;
+        }
+        .g2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid rgba(227, 232, 239, 0.9);
+        overflow: hidden;
+      }
+      .card-head {
+        padding: 18px 20px 0;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+      }
+      .card-head h2,
+      .card-head h3 {
+        font-size: 16px;
+        font-weight: 800;
+      }
+      .tag {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 3px 10px;
+        border-radius: 4px;
+        background: rgba(29, 67, 84, 0.08);
+        color: var(--mtess-navy);
+        white-space: nowrap;
+      }
+      .tag.red {
+        background: rgba(234, 36, 36, 0.08);
+        color: var(--mtess-red);
+      }
+      .tag.cyan {
+        background: rgba(6, 147, 227, 0.08);
+        color: var(--mtess-cyan);
+      }
+      .card-sub {
+        padding: 0 20px;
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+      }
+      .card-body {
+        padding: 14px 16px 18px;
+      }
+
+      .note {
+        border: 1px solid rgba(29, 67, 84, 0.14);
+        background: rgba(29, 67, 84, 0.04);
+        border-radius: 12px;
+        padding: 14px 16px;
+        color: var(--text-secondary);
+        margin-bottom: 16px;
+      }
+      .note-warn {
+        margin-top: 10px;
+      }
+
+      .form {
+        display: grid;
+        gap: 12px;
+      }
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+      .field span {
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+      }
+      input,
+      select {
+        border: 1px solid var(--border);
+        background: white;
+        border-radius: 12px;
+        padding: 12px 12px;
+        font-size: 14px;
+        outline: none;
+      }
+      input:focus,
+      select:focus {
+        border-color: rgba(6, 147, 227, 0.6);
+        box-shadow: 0 0 0 4px rgba(6, 147, 227, 0.14);
+      }
+      .hint {
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+        align-items: center;
+      }
+      .btn {
+        border: 1px solid rgba(29, 67, 84, 0.18);
+        background: white;
+        color: var(--mtess-navy);
+        padding: 10px 14px;
+        border-radius: 12px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow);
+        border-color: rgba(6, 147, 227, 0.35);
+      }
+      .btn.primary {
+        background: linear-gradient(135deg, var(--mtess-red) 0%, #ff4d4d 100%);
+        color: white;
+        border-color: rgba(234, 36, 36, 0.95);
+        box-shadow: 0 10px 22px rgba(234, 36, 36, 0.16);
+      }
+      .btn.primary:hover {
+        box-shadow: 0 16px 32px rgba(234, 36, 36, 0.22);
+      }
+      .btn.file input {
+        display: none;
+      }
+
+      .error {
+        color: var(--mtess-red);
+        font-weight: 700;
+        margin-top: 8px;
+      }
+      .success {
+        color: #0ca678;
+        font-weight: 800;
+        margin-top: 8px;
+      }
+
+      .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .kpi {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 18px 18px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--mtess-navy);
+      }
+      .kpi.red {
+        border-left-color: var(--mtess-red);
+      }
+      .kpi.teal {
+        border-left-color: var(--mtess-teal);
+      }
+      .kpi.cyan {
+        border-left-color: var(--mtess-cyan);
+      }
+      .kpi .kpi-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+      .kpi .kpi-icon.navy {
+        background: rgba(29, 67, 84, 0.1);
+        color: var(--mtess-navy);
+      }
+      .kpi .kpi-icon.red {
+        background: rgba(234, 36, 36, 0.1);
+        color: var(--mtess-red);
+      }
+      .kpi .kpi-icon.teal {
+        background: rgba(52, 226, 228, 0.1);
+        color: #0d9e9f;
+      }
+      .kpi .kpi-icon.cyan {
+        background: rgba(6, 147, 227, 0.08);
+        color: var(--mtess-cyan);
+      }
+      .kpi .kpi-lbl {
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--text-secondary);
+        margin-bottom: 4px;
+      }
+      .kpi .kpi-val {
+        font-size: 24px;
+        font-weight: 900;
+        color: var(--text);
+        letter-spacing: -0.5px;
+      }
+      .kpi .kpi-sub {
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 4px;
+        color: var(--text-secondary);
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+      .tbl {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 13px;
+        min-width: 920px;
+      }
+      .tbl thead th {
+        background: var(--mtess-navy);
+        color: white;
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+      .tbl thead th:first-child {
+        border-radius: 12px 0 0 0;
+      }
+      .tbl thead th:last-child {
+        border-radius: 0 12px 0 0;
+      }
+      .tbl td {
+        padding: 10px 10px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+      }
+      .tbl tbody tr:hover td {
+        background: rgba(6, 147, 227, 0.04);
+      }
+      .tbl input,
+      .tbl select {
+        width: 100%;
+        border-radius: 10px;
+        padding: 10px 10px;
+      }
+
+      .footer {
+        background: var(--mtess-navy-deep);
+        color: rgba(255, 255, 255, 0.7);
+        padding: 26px 18px;
+        text-align: center;
+        font-size: 13px;
+      }
+      .footer strong {
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <span><i class="fas fa-landmark"></i> &nbsp;Ministerio de Trabajo, Empleo y Seguridad Social — República del Paraguay</span>
+      <a href="https://www.mtess.gov.py" target="_blank" rel="noreferrer">www.mtess.gov.py</a>
+    </div>
+
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <div class="hero-badge"><i class="fas fa-clipboard-check"></i> Encuesta</div>
+          <h1>Formulario de<br /><span>Encuesta</span></h1>
+          <p>Luego del primer ingreso, cambie su contraseña en <strong>Mi perfil</strong>.</p>
+        </div>
+        <div class="hero-kpis" id="heroKpis"></div>
+      </div>
+    </header>
+    <div class="red-stripe"></div>
+
+    <nav class="nav" id="appNav" aria-label="Navegación principal">
+      <div class="nav-inner">
+        <button class="nav-btn" id="navEncuesta" type="button"><i class="fas fa-pen-to-square"></i> Encuesta</button>
+        <button class="nav-btn" id="navPerfil" type="button"><i class="fas fa-user-gear"></i> Mi perfil</button>
+        <div class="nav-spacer"></div>
+        <div class="nav-user" id="navUser"></div>
+        <button class="nav-btn danger" id="navLogout" type="button" title="Cerrar sesión"><i class="fas fa-right-from-bracket"></i></button>
+      </div>
+    </nav>
+
+    <main class="main" id="app">
+      <section class="view" id="viewLogin">
+        <div class="card">
+          <div class="card-head">
+            <h2>Iniciar sesión</h2>
+            <span class="tag">Login</span>
+          </div>
+          <div class="card-body">
+            <div class="note">
+              <p>
+                Instrucción para el primer ingreso:
+                <br />
+                <strong>Usuario</strong>: <code>nombreapellido</code> (minúsculas, sin espacios)
+                <br />
+                <strong>Contraseña inicial</strong>: <code>nombreapellido123</code>
+                <br />
+                Luego debe cambiar su contraseña en la vista <strong>Mi perfil</strong>.
+              </p>
+            </div>
+
+            <form id="loginForm" class="form">
+              <label class="field">
+                <span>Usuario</span>
+                <input id="loginUser" type="text" autocomplete="username" placeholder="Ej: juanperez" required />
+                <small class="hint" id="loginUserHint"></small>
+              </label>
+              <label class="field">
+                <span>Contraseña</span>
+                <input id="loginPass" type="password" autocomplete="current-password" placeholder="Ej: juanperez123" required />
+              </label>
+              <div class="actions">
+                <button class="btn primary" type="submit"><i class="fas fa-unlock-keyhole"></i> Entrar</button>
+              </div>
+              <p class="error" id="loginError" role="alert" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="viewEncuesta">
+        <div class="sec-header">
+          <h2>Encuesta</h2>
+          <p>Cargue la información por filas. Los gráficos se actualizan automáticamente.</p>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi">
+            <div class="kpi-icon navy"><i class="fas fa-users"></i></div>
+            <div class="kpi-lbl">Total personas</div>
+            <div class="kpi-val" id="kpiTotal">0</div>
+            <div class="kpi-sub" id="kpiTotalSub">—</div>
+          </div>
+          <div class="kpi teal">
+            <div class="kpi-icon teal"><i class="fas fa-venus-mars"></i></div>
+            <div class="kpi-lbl">% Mujeres</div>
+            <div class="kpi-val" id="kpiMujeres">0%</div>
+            <div class="kpi-sub" id="kpiMujeresSub">—</div>
+          </div>
+          <div class="kpi cyan">
+            <div class="kpi-icon cyan"><i class="fas fa-building-columns"></i></div>
+            <div class="kpi-lbl">Cotizan a IPS</div>
+            <div class="kpi-val" id="kpiIPS">0</div>
+            <div class="kpi-sub" id="kpiIPSSub">—</div>
+          </div>
+          <div class="kpi red">
+            <div class="kpi-icon red"><i class="fas fa-percent"></i></div>
+            <div class="kpi-lbl">Cobertura IPS</div>
+            <div class="kpi-val" id="kpiCobertura">0%</div>
+            <div class="kpi-sub" id="kpiCoberturaSub">—</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Tabla de carga</h3>
+            <span class="tag">Datos</span>
+          </div>
+          <div class="card-sub">Sugerencia: use “Área” y “Cargo” consistentes para mejorar los resultados.</div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table class="tbl" id="rowsTable">
+                <thead>
+                  <tr>
+                    <th>Área</th>
+                    <th>Cargo</th>
+                    <th>Edad (grupo)</th>
+                    <th>Mujeres</th>
+                    <th>Hombres</th>
+                    <th>Mujeres IPS</th>
+                    <th>Hombres IPS</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="rowsBody"></tbody>
+              </table>
+            </div>
+
+            <div class="actions" style="margin-top: 14px">
+              <button class="btn" id="addRowBtn" type="button"><i class="fas fa-plus"></i> Agregar fila</button>
+              <button class="btn primary" id="saveNowBtn" type="button"><i class="fas fa-floppy-disk"></i> Guardar</button>
+              <span class="hint" id="saveStatus"></span>
+              <label class="btn file" style="margin-left: auto">
+                <input id="importJson" type="file" accept="application/json" />
+                <i class="fas fa-upload"></i> Importar JSON
+              </label>
+              <button class="btn" id="exportJsonBtn" type="button"><i class="fas fa-download"></i> Descargar JSON</button>
+              <button class="btn" id="exportCsvBtn" type="button"><i class="fas fa-file-csv"></i> Descargar CSV</button>
+            </div>
+
+            <p class="error" id="rowsError" role="alert" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="grid g2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Pirámide de edades (total)</h3>
+              <span class="tag">H/M</span>
+            </div>
+            <div class="card-sub">Hombres (izquierda) — Mujeres (derecha)</div>
+            <div class="card-body" id="chartPiramide"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>% Mujeres por área (Top 10)</h3>
+              <span class="tag red">Ranking</span>
+            </div>
+            <div class="card-sub">Ordenado por tamaño del área (total personas)</div>
+            <div class="card-body" id="chartMujeresArea"></div>
+          </div>
+        </div>
+
+	        <div class="grid g2">
+	          <div class="card">
+	            <div class="card-head">
+	              <h3>% Mujeres por cargo (Top 10)</h3>
+	              <span class="tag">Ranking</span>
+	            </div>
+	            <div class="card-sub">Ordenado por tamaño del cargo (total personas)</div>
+	            <div class="card-body" id="chartMujeresCargo"></div>
+	          </div>
+	          <div class="card">
+	            <div class="card-head">
+	              <h3>Cobertura IPS por área (Top 10)</h3>
+	              <span class="tag cyan">%</span>
+	            </div>
+	            <div class="card-sub">Cotizan a IPS / total personas</div>
+	            <div class="card-body" id="chartCoberturaArea"></div>
+	          </div>
+	        </div>
+
+	        <div class="grid g2">
+	          <div class="card">
+	            <div class="card-head">
+	              <h3>Cobertura IPS por cargo (Top 10)</h3>
+	              <span class="tag cyan">%</span>
+	            </div>
+	            <div class="card-sub">Cotizan a IPS / total personas</div>
+	            <div class="card-body" id="chartCoberturaCargo"></div>
+	          </div>
+	          <div class="card">
+	            <div class="card-head">
+	              <h3>Brecha cobertura IPS por área</h3>
+	              <span class="tag red">M - H</span>
+	            </div>
+	            <div class="card-sub">Diferencia en puntos porcentuales (cobertura mujeres - cobertura hombres)</div>
+	            <div class="card-body" id="chartBrechaIpsArea"></div>
+	          </div>
+	        </div>
+	      </section>
+
+      <section class="view" id="viewPerfil">
+        <div class="sec-header">
+          <h2>Mi perfil</h2>
+          <p>Gestione su contraseña.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Cuenta</h3>
+            <span class="tag">Perfil</span>
+          </div>
+          <div class="card-body">
+            <div class="note">
+              <p>
+                Usuario: <strong id="perfilUser">—</strong>
+                <br />
+                Estado: <strong id="perfilEstado">—</strong>
+              </p>
+            </div>
+
+            <form id="passForm" class="form">
+              <label class="field">
+                <span>Contraseña actual</span>
+                <input id="passCurrent" type="password" autocomplete="current-password" required />
+              </label>
+              <label class="field">
+                <span>Nueva contraseña</span>
+                <input id="passNew" type="password" autocomplete="new-password" required />
+                <small class="hint">Recomendado: 8+ caracteres.</small>
+              </label>
+              <label class="field">
+                <span>Confirmar nueva contraseña</span>
+                <input id="passNew2" type="password" autocomplete="new-password" required />
+              </label>
+
+              <div class="actions">
+                <button class="btn primary" type="submit"><i class="fas fa-key"></i> Cambiar contraseña</button>
+              </div>
+
+              <p class="success" id="passSuccess" role="status" aria-live="polite"></p>
+              <p class="error" id="passError" role="alert" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p><strong>MTESS</strong> — Encuesta (Apps Script)</p>
+      <p style="margin-top: 6px; opacity: 0.7">Las respuestas se guardan en un Google Sheet (hojas <code>Users</code> y <code>Responses</code>).</p>
+    </footer>
+
+    <script>
+      const LS_TOKEN = "mtess_encuesta_token_v1";
+      const AGE_GROUPS = ${JSON.stringify(
+        [
+          "15 a 19",
+          "20 a 24",
+          "25 a 29",
+          "30 a 34",
+          "35 a 39",
+          "40 a 44",
+          "45 a 49",
+          "50 a 54",
+          "55 a 59",
+          "60 a 64",
+          "65 a 69",
+          "70 a 74",
+          "75 a 79",
+          "80 a 84",
+          "85 y más",
+        ],
+        null,
+        0,
+      )};
+
+      const state = { token: null, username: null, mustChangePassword: false, rows: [] };
+
+      const $ = (id) => document.getElementById(id);
+      const fmt = (n) => Number(n || 0).toLocaleString("es-PY");
+      const fmtPct = (n) => (Number.isFinite(n) ? n : 0).toFixed(1) + "%";
+
+      function normalizeUsername(input) {
+        const raw = String(input || "")
+          .trim()
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\\u0300-\\u036f]/g, "");
+        return raw.replace(/\\s+/g, "").replace(/[^a-z0-9]/g, "");
+      }
+
+      function toInt(v) {
+        const n = Number.parseInt(String(v || "0"), 10);
+        return Number.isFinite(n) ? Math.max(0, n) : 0;
+      }
+
+      function blankRow() {
+        return { area: "", cargo: "", edad_grupo: AGE_GROUPS[1], mujeres_total: 0, hombres_total: 0, mujeres_ips: 0, hombres_ips: 0 };
+      }
+
+      function normalizeRow(r) {
+        const out = { ...blankRow(), ...(r || {}) };
+        out.area = String(out.area || "");
+        out.cargo = String(out.cargo || "");
+        out.edad_grupo = AGE_GROUPS.includes(out.edad_grupo) ? out.edad_grupo : AGE_GROUPS[1];
+        out.mujeres_total = toInt(out.mujeres_total);
+        out.hombres_total = toInt(out.hombres_total);
+        out.mujeres_ips = toInt(out.mujeres_ips);
+        out.hombres_ips = toInt(out.hombres_ips);
+        return out;
+      }
+
+      function setView(viewId) {
+        ["viewLogin", "viewEncuesta", "viewPerfil"].forEach((id) => $(id).classList.remove("active"));
+        $(viewId).classList.add("active");
+      }
+      function setActiveNav(navId) {
+        ["navEncuesta", "navPerfil"].forEach((id) => $(id).classList.remove("active"));
+        $(navId).classList.add("active");
+      }
+      function showNav(visible) {
+        $("appNav").style.display = visible ? "block" : "none";
+      }
+
+      function escapeCsv(val) {
+        const s = String(val ?? "");
+        if (/[",\\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+        return s;
+      }
+      function downloadBlob(filename, blob) {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      }
+
+      function computeStats(rows) {
+        let w = 0,
+          m = 0,
+          wI = 0,
+          mI = 0;
+        const age = new Map();
+	        const byArea = new Map();
+	        const byCargo = new Map();
+	        const addGroup = (map, key, row) => {
+	          const k = String(key || "").trim() || "(Sin dato)";
+	          const cur = map.get(k) || { w: 0, m: 0, wI: 0, mI: 0, ips: 0, total: 0 };
+	          cur.w += row.mujeres_total;
+	          cur.m += row.hombres_total;
+	          cur.wI += row.mujeres_ips;
+	          cur.mI += row.hombres_ips;
+	          cur.ips += row.mujeres_ips + row.hombres_ips;
+	          cur.total = cur.w + cur.m;
+	          map.set(k, cur);
+	        };
+        (rows || []).forEach((r0) => {
+          const r = normalizeRow(r0);
+          w += r.mujeres_total;
+          m += r.hombres_total;
+          wI += r.mujeres_ips;
+          mI += r.hombres_ips;
+          const ag = r.edad_grupo;
+          const cur = age.get(ag) || { w: 0, m: 0 };
+          cur.w += r.mujeres_total;
+          cur.m += r.hombres_total;
+          age.set(ag, cur);
+          addGroup(byArea, r.area, r);
+          addGroup(byCargo, r.cargo, r);
+        });
+        const total = w + m;
+        const ips = wI + mI;
+        const pctW = total > 0 ? (w / total) * 100 : 0;
+        const pctIps = total > 0 ? (ips / total) * 100 : 0;
+        return { total, w, m, ips, pctW, pctIps, age, byArea, byCargo };
+      }
+
+      function validateRows(rows) {
+        const errors = [];
+        (rows || []).forEach((r0, idx) => {
+          const r = normalizeRow(r0);
+          if (r.mujeres_ips > r.mujeres_total) errors.push(`Fila ${idx + 1}: Mujeres IPS (${r.mujeres_ips}) supera Mujeres (${r.mujeres_total}).`);
+          if (r.hombres_ips > r.hombres_total) errors.push(`Fila ${idx + 1}: Hombres IPS (${r.hombres_ips}) supera Hombres (${r.hombres_total}).`);
+        });
+        return errors;
+      }
+
+      function renderHero(stats) {
+        const countRows = (state.rows || []).length;
+        $("heroKpis").innerHTML = `
+          <div class="hero-kpi"><div class="num">${fmt(stats.total)}</div><div class="lbl">Total Personas</div></div>
+          <div class="hero-kpi"><div class="num">${fmtPct(stats.pctW)}</div><div class="lbl">% Mujeres</div></div>
+          <div class="hero-kpi"><div class="num">${fmtPct(stats.pctIps)}</div><div class="lbl">Cobertura IPS</div></div>
+          <div class="hero-kpi"><div class="num">${fmt(countRows)}</div><div class="lbl">Registros</div></div>
+        `;
+      }
+
+      function renderKPIs(stats) {
+        $("kpiTotal").textContent = fmt(stats.total);
+        $("kpiTotalSub").textContent = `${fmt(stats.w)} mujeres · ${fmt(stats.m)} hombres`;
+        $("kpiMujeres").textContent = fmtPct(stats.pctW);
+        $("kpiMujeresSub").textContent = stats.total ? `Mujeres: ${fmt(stats.w)}` : "—";
+        $("kpiIPS").textContent = fmt(stats.ips);
+        $("kpiIPSSub").textContent = stats.total ? `IPS: ${fmtPct(stats.pctIps)} del total` : "—";
+        $("kpiCobertura").textContent = fmtPct(stats.pctIps);
+        $("kpiCoberturaSub").textContent = stats.total ? `${fmt(stats.ips)} de ${fmt(stats.total)}` : "—";
+      }
+
+      function plotlyLayout(overrides = {}) {
+        return {
+          paper_bgcolor: "rgba(0,0,0,0)",
+          plot_bgcolor: "rgba(0,0,0,0)",
+          font: { family: "DM Sans, sans-serif", size: 12, color: "#5a6a7e" },
+          margin: { t: 28, b: 56, l: 70, r: 20 },
+          xaxis: { gridcolor: "#eef1f5", zeroline: false },
+          yaxis: { gridcolor: "#eef1f5", zeroline: false },
+          legend: { orientation: "h", y: 1.12, x: 0.5, xanchor: "center" },
+          hoverlabel: { bordercolor: "transparent" },
+          ...overrides,
+        };
+      }
+      function plotlyConfig() {
+        return { responsive: true, displaylogo: false, modeBarButtonsToRemove: ["lasso2d", "select2d"] };
+      }
+
+      function renderCharts(stats) {
+        if (!window.Plotly) return;
+
+        const y = [...AGE_GROUPS].slice().reverse();
+        const menAbs = y.map((g) => stats.age.get(g)?.m || 0);
+        const men = menAbs.map((v) => -v);
+        const women = y.map((g) => stats.age.get(g)?.w || 0);
+        const maxV = Math.max(1, ...men.map((v) => Math.abs(v)), ...women) * 1.15;
+
+        Plotly.newPlot(
+          "chartPiramide",
+          [
+            { y, x: men, customdata: menAbs, name: "Hombres", type: "bar", orientation: "h", marker: { color: "#1d4354" }, hovertemplate: "<b>%{y}</b><br>Hombres: %{customdata:,.0f}<extra></extra>" },
+            { y, x: women, name: "Mujeres", type: "bar", orientation: "h", marker: { color: "#ea2424" }, hovertemplate: "<b>%{y}</b><br>Mujeres: %{x:,.0f}<extra></extra>" },
+          ],
+          plotlyLayout({
+            barmode: "relative",
+            bargap: 0.12,
+            height: Math.max(420, y.length * 26),
+            xaxis: { range: [-maxV, maxV], showticklabels: false, showgrid: false, zeroline: true, zerolinecolor: "#dee2e6", zerolinewidth: 2 },
+            yaxis: { showgrid: false },
+            margin: { t: 20, b: 40, l: 78, r: 18 },
+          }),
+          plotlyConfig(),
+        );
+
+        const topN = (map, n = 10) =>
+          [...map.entries()]
+            .filter(([, v]) => v.total > 0)
+            .sort((a, b) => b[1].total - a[1].total)
+            .slice(0, n);
+
+        const areas = topN(stats.byArea, 10);
+        const cargos = topN(stats.byCargo, 10);
+        const areaX = areas.map(([k]) => k);
+        const areaY = areas.map(([, v]) => (v.total ? (v.w / v.total) * 100 : 0));
+        const areaCov = areas.map(([, v]) => (v.total ? (v.ips / v.total) * 100 : 0));
+
+        Plotly.newPlot(
+          "chartMujeresArea",
+          [
+            {
+              x: areaX,
+	              y: areaY,
+	              type: "bar",
+	              marker: { color: areaY.map((p) => (p >= 50 ? "#ea2424" : "#1d4354")) },
+	              text: areaY.map((p) => p.toFixed(1) + "%"),
+	              textposition: "outside",
+	              customdata: areas.map(([, v]) => [v.total, v.w, v.m]),
+	              hovertemplate:
+	                "<b>%{x}</b><br>%{y:.1f}% mujeres<br>Total: %{customdata[0]:,.0f}<br>Mujeres: %{customdata[1]:,.0f}<br>Hombres: %{customdata[2]:,.0f}<extra></extra>",
+	            },
+	          ],
+	          plotlyLayout({
+	            height: 420,
+            yaxis: { title: "% Mujeres", range: [0, Math.max(60, Math.max(...areaY) * 1.2)] },
+            xaxis: { tickangle: -30 },
+            margin: { t: 20, b: 96, l: 60, r: 18 },
+            shapes: [{ type: "line", x0: -0.5, x1: areaX.length - 0.5, y0: 50, y1: 50, line: { color: "#ea2424", width: 2, dash: "dash" } }],
+          }),
+          plotlyConfig(),
+        );
+
+        const cargoX = cargos.map(([k]) => k);
+        const cargoY = cargos.map(([, v]) => (v.total ? (v.w / v.total) * 100 : 0));
+        Plotly.newPlot(
+          "chartMujeresCargo",
+          [
+            {
+              x: cargoX,
+	              y: cargoY,
+	              type: "bar",
+	              marker: { color: cargoY.map((p) => (p >= 50 ? "#ea2424" : "#1d4354")) },
+	              text: cargoY.map((p) => p.toFixed(1) + "%"),
+	              textposition: "outside",
+	              customdata: cargos.map(([, v]) => [v.total, v.w, v.m]),
+	              hovertemplate:
+	                "<b>%{x}</b><br>%{y:.1f}% mujeres<br>Total: %{customdata[0]:,.0f}<br>Mujeres: %{customdata[1]:,.0f}<br>Hombres: %{customdata[2]:,.0f}<extra></extra>",
+	            },
+	          ],
+	          plotlyLayout({
+	            height: 420,
+            yaxis: { title: "% Mujeres", range: [0, Math.max(60, Math.max(...cargoY) * 1.2)] },
+            xaxis: { tickangle: -30 },
+            margin: { t: 20, b: 96, l: 60, r: 18 },
+            shapes: [{ type: "line", x0: -0.5, x1: cargoX.length - 0.5, y0: 50, y1: 50, line: { color: "#ea2424", width: 2, dash: "dash" } }],
+          }),
+	          plotlyConfig(),
+	        );
+
+	        const cargoCov = cargos.map(([, v]) => (v.total ? (v.ips / v.total) * 100 : 0));
+	        Plotly.newPlot(
+	          "chartCoberturaCargo",
+	          [
+	            {
+	              x: cargoX,
+	              y: cargoCov,
+	              type: "bar",
+	              marker: { color: "#0693e3" },
+	              text: cargoCov.map((p) => p.toFixed(1) + "%"),
+	              textposition: "outside",
+	              customdata: cargos.map(([, v]) => [v.ips, v.total]),
+	              hovertemplate: "<b>%{x}</b><br>%{y:.1f}% cobertura IPS<br>IPS: %{customdata[0]:,.0f}<br>Total: %{customdata[1]:,.0f}<extra></extra>",
+	            },
+	          ],
+	          plotlyLayout({
+	            height: 420,
+	            yaxis: { title: "% Cobertura IPS", range: [0, Math.max(60, Math.max(...cargoCov) * 1.2)] },
+	            xaxis: { tickangle: -30 },
+	            margin: { t: 20, b: 96, l: 70, r: 18 },
+	          }),
+	          plotlyConfig(),
+	        );
+
+	        const areaGapCustom = areas.map(([, v]) => {
+	          const wCov = v.w ? (v.wI / v.w) * 100 : 0;
+	          const mCov = v.m ? (v.mI / v.m) * 100 : 0;
+	          return [wCov, mCov, v.wI, v.w, v.mI, v.m];
+	        });
+	        const areaGap = areaGapCustom.map((d) => d[0] - d[1]);
+	        const gapMaxAbs = Math.max(5, ...areaGap.map((g) => Math.abs(g))) * 1.25;
+	        Plotly.newPlot(
+	          "chartBrechaIpsArea",
+	          [
+	            {
+	              x: areaX,
+	              y: areaGap,
+	              type: "bar",
+	              marker: { color: areaGap.map((g) => (g > 0.05 ? "#ea2424" : g < -0.05 ? "#1d4354" : "#6c757d")) },
+	              text: areaGap.map((g) => (g >= 0 ? "+" : "") + g.toFixed(1) + " pp"),
+	              textposition: "outside",
+	              customdata: areaGapCustom,
+	              hovertemplate:
+	                "<b>%{x}</b><br>Brecha (Mujeres - Hombres): %{y:+.1f} pp<br>Cobertura mujeres: %{customdata[0]:.1f}% (%{customdata[2]:,.0f} / %{customdata[3]:,.0f})<br>Cobertura hombres: %{customdata[1]:.1f}% (%{customdata[4]:,.0f} / %{customdata[5]:,.0f})<extra></extra>",
+	            },
+	          ],
+	          plotlyLayout({
+	            height: 420,
+	            yaxis: { title: "Brecha cobertura IPS (pp)", range: [-gapMaxAbs, gapMaxAbs] },
+	            xaxis: { tickangle: -30 },
+	            margin: { t: 20, b: 96, l: 70, r: 18 },
+	            shapes: [{ type: "line", xref: "paper", x0: 0, x1: 1, y0: 0, y1: 0, line: { color: "#adb5bd", width: 2, dash: "dash" } }],
+	          }),
+	          plotlyConfig(),
+	        );
+
+	        Plotly.newPlot(
+	          "chartCoberturaArea",
+	          [
+	            {
+	              x: areaX,
+	              y: areaCov,
+	              type: "bar",
+	              marker: { color: "#0693e3" },
+	              text: areaCov.map((p) => p.toFixed(1) + "%"),
+	              textposition: "outside",
+	              customdata: areas.map(([, v]) => [v.ips, v.total]),
+	              hovertemplate: "<b>%{x}</b><br>%{y:.1f}% cobertura IPS<br>IPS: %{customdata[0]:,.0f}<br>Total: %{customdata[1]:,.0f}<extra></extra>",
+	            },
+	          ],
+	          plotlyLayout({
+	            height: 420,
+            yaxis: { title: "% Cobertura IPS", range: [0, Math.max(60, Math.max(...areaCov) * 1.2)] },
+            xaxis: { tickangle: -30 },
+            margin: { t: 20, b: 96, l: 70, r: 18 },
+          }),
+          plotlyConfig(),
+        );
+      }
+
+      function renderTable() {
+        const body = $("rowsBody");
+        body.innerHTML = "";
+        const rows = state.rows || [];
+        rows.forEach((r0, idx) => {
+          const row = normalizeRow(r0);
+          const tr = document.createElement("tr");
+
+          const mkText = (field, placeholder) => {
+            const td = document.createElement("td");
+            const inp = document.createElement("input");
+            inp.type = "text";
+            inp.value = row[field] || "";
+            inp.placeholder = placeholder || "";
+            inp.addEventListener("input", () => {
+              state.rows[idx][field] = inp.value;
+              updateStats();
+              scheduleSave();
+            });
+            td.appendChild(inp);
+            return td;
+          };
+
+          const mkSelect = (field) => {
+            const td = document.createElement("td");
+            const sel = document.createElement("select");
+            AGE_GROUPS.forEach((g) => {
+              const opt = document.createElement("option");
+              opt.value = g;
+              opt.textContent = g;
+              sel.appendChild(opt);
+            });
+            sel.value = row[field];
+            sel.addEventListener("change", () => {
+              state.rows[idx][field] = sel.value;
+              updateStats();
+              scheduleSave();
+            });
+            td.appendChild(sel);
+            return td;
+          };
+
+          const mkNum = (field) => {
+            const td = document.createElement("td");
+            const inp = document.createElement("input");
+            inp.type = "number";
+            inp.min = "0";
+            inp.step = "1";
+            inp.value = String(toInt(row[field]));
+            inp.addEventListener("input", () => {
+              state.rows[idx][field] = toInt(inp.value);
+              updateStats();
+              scheduleSave();
+            });
+            td.appendChild(inp);
+            return td;
+          };
+
+          const tdDel = document.createElement("td");
+          const delBtn = document.createElement("button");
+          delBtn.className = "btn";
+          delBtn.type = "button";
+          delBtn.title = "Eliminar fila";
+          delBtn.innerHTML = '<i class="fas fa-trash"></i>';
+          delBtn.addEventListener("click", () => {
+            state.rows.splice(idx, 1);
+            if (state.rows.length === 0) state.rows.push(blankRow());
+            renderAll();
+            scheduleSave();
+          });
+          tdDel.appendChild(delBtn);
+
+          tr.appendChild(mkText("area", "Ej: Finanzas"));
+          tr.appendChild(mkText("cargo", "Ej: Analista"));
+          tr.appendChild(mkSelect("edad_grupo"));
+          tr.appendChild(mkNum("mujeres_total"));
+          tr.appendChild(mkNum("hombres_total"));
+          tr.appendChild(mkNum("mujeres_ips"));
+          tr.appendChild(mkNum("hombres_ips"));
+          tr.appendChild(tdDel);
+
+          body.appendChild(tr);
+        });
+      }
+
+      let chartsTimer = null;
+      function updateStats() {
+        const errors = validateRows(state.rows);
+        $("rowsError").textContent = errors.length ? errors[0] : "";
+        const stats = computeStats(state.rows);
+        renderHero(stats);
+        renderKPIs(stats);
+        if (chartsTimer) clearTimeout(chartsTimer);
+        chartsTimer = setTimeout(() => renderCharts(stats), 160);
+      }
+
+      function renderAll() {
+        renderTable();
+        updateStats();
+      }
+
+      function updatePerfilUI() {
+        $("perfilUser").textContent = state.username || "—";
+        $("perfilEstado").textContent = state.mustChangePassword ? "Debe cambiar la contraseña" : "OK";
+      }
+
+      function setSaveStatus(text) {
+        $("saveStatus").textContent = text || "";
+      }
+
+      let saveTimer = null;
+      function scheduleSave() {
+        if (saveTimer) clearTimeout(saveTimer);
+        setSaveStatus("Cambios sin guardar…");
+        saveTimer = setTimeout(saveNow, 1100);
+      }
+
+      function saveNow() {
+        if (!state.token) return;
+        const errors = validateRows(state.rows);
+        if (errors.length) return;
+        setSaveStatus("Guardando…");
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (!res || !res.ok) {
+              setSaveStatus("");
+              $("rowsError").textContent = (res && res.msg) || "Error al guardar.";
+              return;
+            }
+            setSaveStatus("Guardado: " + new Date(res.savedAt).toLocaleString("es-PY"));
+          })
+          .withFailureHandler((err) => {
+            setSaveStatus("");
+            $("rowsError").textContent = String(err && err.message ? err.message : err);
+          })
+          .apiSaveRows(state.token, state.rows.map(normalizeRow));
+      }
+
+      function logout() {
+        state.token = null;
+        state.username = null;
+        state.mustChangePassword = false;
+        state.rows = [];
+        localStorage.removeItem(LS_TOKEN);
+        showNav(false);
+        setView("viewLogin");
+        setActiveNav("navEncuesta");
+        $("loginPass").value = "";
+        setSaveStatus("");
+        updateStats();
+      }
+
+      function setupNav() {
+        $("navEncuesta").addEventListener("click", () => {
+          if (!state.token) return;
+          if (state.mustChangePassword) {
+            setActiveNav("navPerfil");
+            setView("viewPerfil");
+            return;
+          }
+          setActiveNav("navEncuesta");
+          setView("viewEncuesta");
+          renderAll();
+        });
+        $("navPerfil").addEventListener("click", () => {
+          if (!state.token) return;
+          setActiveNav("navPerfil");
+          setView("viewPerfil");
+          updatePerfilUI();
+        });
+        $("navLogout").addEventListener("click", () => logout());
+      }
+
+      function setupEncuestaActions() {
+        $("addRowBtn").addEventListener("click", () => {
+          state.rows.push(blankRow());
+          renderAll();
+          scheduleSave();
+        });
+        $("saveNowBtn").addEventListener("click", () => saveNow());
+
+        $("exportJsonBtn").addEventListener("click", () => {
+          const payload = { exportedAt: new Date().toISOString(), username: state.username, rows: state.rows.map(normalizeRow) };
+          downloadBlob(`encuesta_${state.username}_${new Date().toISOString().replace(/[:.]/g, "-")}.json`, new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" }));
+        });
+        $("exportCsvBtn").addEventListener("click", () => {
+          const headers = ["area", "cargo", "edad_grupo", "mujeres_total", "hombres_total", "mujeres_ips", "hombres_ips"];
+          let csv = headers.join(",") + "\\n";
+          (state.rows || []).forEach((r0) => {
+            const r = normalizeRow(r0);
+            csv += headers.map((h) => escapeCsv(r[h])).join(",") + "\\n";
+          });
+          downloadBlob(`encuesta_${state.username}_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.csv`, new Blob([csv], { type: "text/csv;charset=utf-8" }));
+        });
+
+        $("importJson").addEventListener("change", async (ev) => {
+          const f = ev.target.files?.[0];
+          if (!f) return;
+          try {
+            const text = await f.text();
+            const parsed = JSON.parse(text);
+            if (!parsed || !Array.isArray(parsed.rows)) throw new Error("JSON inválido: falta 'rows'.");
+            state.rows = parsed.rows.map(normalizeRow);
+            if (state.rows.length === 0) state.rows = [blankRow()];
+            renderAll();
+            scheduleSave();
+            ev.target.value = "";
+          } catch (err) {
+            $("rowsError").textContent = String(err?.message || err || "Error al importar JSON.");
+          }
+        });
+      }
+
+      function setupLoginHints() {
+        $("loginUser").addEventListener("input", () => {
+          const u = normalizeUsername($("loginUser").value);
+          $("loginUserHint").textContent = u ? `Normalizado: ${u} · Contraseña inicial: ${u}123` : "";
+        });
+      }
+
+      function handleLogin(e) {
+        e.preventDefault();
+        $("loginError").textContent = "";
+
+        const user = normalizeUsername($("loginUser").value);
+        const pass = $("loginPass").value;
+        $("loginUser").value = user;
+
+        if (!user) {
+          $("loginError").textContent = "Ingrese un usuario válido.";
+          return;
+        }
+        if (!pass) {
+          $("loginError").textContent = "Ingrese la contraseña.";
+          return;
+        }
+
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (!res || !res.ok) {
+              $("loginError").textContent = (res && res.msg) || "Error de login.";
+              return;
+            }
+            state.token = res.token;
+            state.username = res.username;
+            state.mustChangePassword = !!res.mustChangePassword;
+            localStorage.setItem(LS_TOKEN, state.token);
+            $("navUser").textContent = state.username;
+            showNav(true);
+            updatePerfilUI();
+            fetchMyRows(() => {
+              if (state.mustChangePassword) {
+                setActiveNav("navPerfil");
+                setView("viewPerfil");
+              } else {
+                setActiveNav("navEncuesta");
+                setView("viewEncuesta");
+              }
+              renderAll();
+            });
+          })
+          .withFailureHandler((err) => {
+            $("loginError").textContent = String(err && err.message ? err.message : err);
+          })
+          .apiLogin(user, pass);
+      }
+
+      function fetchMyRows(done) {
+        if (!state.token) return done && done();
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (!res || !res.ok) {
+              logout();
+              return;
+            }
+            state.rows = (res.rows || []).map(normalizeRow);
+            if (state.rows.length === 0) state.rows = [blankRow()];
+            setSaveStatus("");
+            done && done();
+          })
+          .withFailureHandler(() => {
+            state.rows = [blankRow()];
+            done && done();
+          })
+          .apiGetMyRows(state.token);
+      }
+
+      function handleChangePassword(e) {
+        e.preventDefault();
+        $("passError").textContent = "";
+        $("passSuccess").textContent = "";
+        const cur = $("passCurrent").value;
+        const n1 = $("passNew").value;
+        const n2 = $("passNew2").value;
+        if (n1 !== n2) {
+          $("passError").textContent = "La nueva contraseña no coincide.";
+          return;
+        }
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (!res || !res.ok) {
+              $("passError").textContent = (res && res.msg) || "Error al cambiar la contraseña.";
+              return;
+            }
+            state.mustChangePassword = false;
+            updatePerfilUI();
+            $("passSuccess").textContent = "Contraseña actualizada.";
+            $("passCurrent").value = "";
+            $("passNew").value = "";
+            $("passNew2").value = "";
+            setActiveNav("navEncuesta");
+            setView("viewEncuesta");
+            renderAll();
+          })
+          .withFailureHandler((err) => {
+            $("passError").textContent = String(err && err.message ? err.message : err);
+          })
+          .apiChangePassword(state.token, cur, n1);
+      }
+
+      function boot() {
+        setupNav();
+        setupEncuestaActions();
+        setupLoginHints();
+        $("loginForm").addEventListener("submit", handleLogin);
+        $("passForm").addEventListener("submit", handleChangePassword);
+
+        const tok = localStorage.getItem(LS_TOKEN);
+        if (!tok) {
+          showNav(false);
+          setView("viewLogin");
+          renderHero(computeStats([]));
+          return;
+        }
+
+        google.script.run
+          .withSuccessHandler((res) => {
+            if (!res || !res.ok) {
+              logout();
+              return;
+            }
+            state.token = tok;
+            state.username = res.username;
+            state.mustChangePassword = !!res.mustChangePassword;
+            $("navUser").textContent = state.username;
+            showNav(true);
+            updatePerfilUI();
+            fetchMyRows(() => {
+              if (state.mustChangePassword) {
+                setActiveNav("navPerfil");
+                setView("viewPerfil");
+              } else {
+                setActiveNav("navEncuesta");
+                setView("viewEncuesta");
+              }
+              renderAll();
+            });
+          })
+          .withFailureHandler(() => logout())
+          .apiWhoAmI(tok);
+      }
+
+      boot();
+    </script>
+  </body>
+</html>

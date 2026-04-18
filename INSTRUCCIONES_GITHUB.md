@@ -24,6 +24,14 @@ git push
 
 GitHub Pages suele actualizar en 1–2 minutos.
 
+## Encuesta (modo local, no seguro)
+
+La mini app de encuesta está en `encuesta/` y se publica en `https://bessmtess.github.io/boletin/encuesta/`.
+
+## Encuesta (Apps Script)
+
+Implementación alternativa como Web App en Google Apps Script (con guardado en Google Sheet): ver `apps_script/encuesta/` (incluye `README.md`).
+
 ## 3) Configuración (si alguna vez se desactiva)
 
 En GitHub: **Settings → Pages**

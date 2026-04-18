@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Encuesta — MTESS</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&family=Source+Serif+4:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="topbar">
+      <span><i class="fas fa-landmark"></i> &nbsp;Ministerio de Trabajo, Empleo y Seguridad Social — República del Paraguay</span>
+      <a href="https://www.mtess.gov.py" target="_blank" rel="noreferrer">www.mtess.gov.py</a>
+    </div>
+
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <div class="hero-badge"><i class="fas fa-clipboard-check"></i> Encuesta</div>
+          <h1>Formulario de<br /><span>Encuesta</span></h1>
+          <p>Acceso local (del lado del navegador). Luego del primer ingreso, cambie su contraseña en <strong>Mi perfil</strong>.</p>
+        </div>
+        <div class="hero-kpis" id="heroKpis"></div>
+      </div>
+    </header>
+    <div class="red-stripe"></div>
+
+    <nav class="nav" id="appNav" aria-label="Navegación principal">
+      <div class="nav-inner">
+        <button class="nav-btn" id="navEncuesta" type="button">
+          <i class="fas fa-pen-to-square"></i>
+          Encuesta
+        </button>
+        <button class="nav-btn" id="navPerfil" type="button">
+          <i class="fas fa-user-gear"></i>
+          Mi perfil
+        </button>
+        <div class="nav-spacer"></div>
+        <div class="nav-user" id="navUser"></div>
+        <button class="nav-btn danger" id="navLogout" type="button" title="Cerrar sesión">
+          <i class="fas fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </nav>
+
+    <main class="main" id="app">
+      <section class="view" id="viewLogin">
+        <div class="card">
+          <div class="card-head">
+            <h2>Iniciar sesión</h2>
+            <span class="tag">Login</span>
+          </div>
+          <div class="card-body">
+            <div class="note">
+              <p>
+                Instrucción para el primer ingreso:
+                <br />
+                <strong>Usuario</strong>: <code>nombreapellido</code> (minúsculas, sin espacios)
+                <br />
+                <strong>Contraseña inicial</strong>: <code>nombreapellido123</code>
+                <br />
+                Luego debe cambiar su contraseña en la vista <strong>Mi perfil</strong>.
+              </p>
+              <p class="note-warn">
+                Importante: este acceso es <strong>solo del lado del navegador</strong> (no es seguro). La contraseña y respuestas se guardan en este
+                dispositivo.
+              </p>
+            </div>
+
+            <form id="loginForm" class="form">
+              <label class="field">
+                <span>Usuario</span>
+                <input id="loginUser" type="text" inputmode="text" autocomplete="username" placeholder="Ej: juanperez" required />
+                <small class="hint" id="loginUserHint"></small>
+              </label>
+
+              <label class="field">
+                <span>Contraseña</span>
+                <input id="loginPass" type="password" autocomplete="current-password" placeholder="Ej: juanperez123" required />
+              </label>
+
+              <div class="actions">
+                <button class="btn primary" type="submit"><i class="fas fa-unlock-keyhole"></i> Entrar</button>
+              </div>
+              <p class="error" id="loginError" role="alert" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="viewEncuesta">
+        <div class="sec-header">
+          <h2>Encuesta</h2>
+          <p>Cargue la información por filas. Los gráficos se actualizan automáticamente.</p>
+        </div>
+
+        <div class="kpi-row" id="kpiRow">
+          <div class="kpi">
+            <div class="kpi-icon navy"><i class="fas fa-users"></i></div>
+            <div class="kpi-lbl">Total personas</div>
+            <div class="kpi-val" id="kpiTotal">0</div>
+            <div class="kpi-sub" id="kpiTotalSub">—</div>
+          </div>
+          <div class="kpi teal">
+            <div class="kpi-icon teal"><i class="fas fa-venus-mars"></i></div>
+            <div class="kpi-lbl">% Mujeres</div>
+            <div class="kpi-val" id="kpiMujeres">0%</div>
+            <div class="kpi-sub" id="kpiMujeresSub">—</div>
+          </div>
+          <div class="kpi cyan">
+            <div class="kpi-icon cyan"><i class="fas fa-building-columns"></i></div>
+            <div class="kpi-lbl">Cotizan a IPS</div>
+            <div class="kpi-val" id="kpiIPS">0</div>
+            <div class="kpi-sub" id="kpiIPSSub">—</div>
+          </div>
+          <div class="kpi red">
+            <div class="kpi-icon red"><i class="fas fa-percent"></i></div>
+            <div class="kpi-lbl">Cobertura IPS</div>
+            <div class="kpi-val" id="kpiCobertura">0%</div>
+            <div class="kpi-sub" id="kpiCoberturaSub">—</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Tabla de carga</h3>
+            <span class="tag">Datos</span>
+          </div>
+          <div class="card-sub">Sugerencia: use “Área” y “Cargo” consistentes para mejorar los resultados.</div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table class="tbl" id="rowsTable">
+                <thead>
+                  <tr>
+                    <th>Área</th>
+                    <th>Cargo</th>
+                    <th>Edad (grupo)</th>
+                    <th>Mujeres</th>
+                    <th>Hombres</th>
+                    <th>Mujeres IPS</th>
+                    <th>Hombres IPS</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="rowsBody"></tbody>
+              </table>
+            </div>
+
+            <div class="actions row-actions">
+              <button class="btn" id="addRowBtn" type="button"><i class="fas fa-plus"></i> Agregar fila</button>
+              <label class="btn file">
+                <input id="importJson" type="file" accept="application/json" />
+                <i class="fas fa-upload"></i> Importar JSON
+              </label>
+              <button class="btn" id="exportJsonBtn" type="button"><i class="fas fa-download"></i> Descargar JSON</button>
+              <button class="btn" id="exportCsvBtn" type="button"><i class="fas fa-file-csv"></i> Descargar CSV</button>
+            </div>
+
+            <p class="error" id="rowsError" role="alert" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="grid g2">
+          <div class="card">
+            <div class="card-head">
+              <h3>Pirámide de edades (total)</h3>
+              <span class="tag">H/M</span>
+            </div>
+            <div class="card-sub">Hombres (izquierda) — Mujeres (derecha)</div>
+            <div class="card-body" id="chartPiramide"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <h3>% Mujeres por área (Top 10)</h3>
+              <span class="tag red">Ranking</span>
+            </div>
+            <div class="card-sub">Ordenado por tamaño del área (total personas)</div>
+            <div class="card-body" id="chartMujeresArea"></div>
+          </div>
+        </div>
+
+	        <div class="grid g2">
+	          <div class="card">
+	            <div class="card-head">
+	              <h3>% Mujeres por cargo (Top 10)</h3>
+	              <span class="tag">Ranking</span>
+	            </div>
+	            <div class="card-sub">Ordenado por tamaño del cargo (total personas)</div>
+	            <div class="card-body" id="chartMujeresCargo"></div>
+	          </div>
+	          <div class="card">
+	            <div class="card-head">
+	              <h3>Cobertura IPS por área (Top 10)</h3>
+	              <span class="tag cyan">%</span>
+	            </div>
+	            <div class="card-sub">Cotizan a IPS / total personas</div>
+	            <div class="card-body" id="chartCoberturaArea"></div>
+	          </div>
+	        </div>
+
+	        <div class="grid g2">
+	          <div class="card">
+	            <div class="card-head">
+	              <h3>Cobertura IPS por cargo (Top 10)</h3>
+	              <span class="tag cyan">%</span>
+	            </div>
+	            <div class="card-sub">Cotizan a IPS / total personas</div>
+	            <div class="card-body" id="chartCoberturaCargo"></div>
+	          </div>
+	          <div class="card">
+	            <div class="card-head">
+	              <h3>Brecha cobertura IPS por área</h3>
+	              <span class="tag red">M - H</span>
+	            </div>
+	            <div class="card-sub">Diferencia en puntos porcentuales (cobertura mujeres - cobertura hombres)</div>
+	            <div class="card-body" id="chartBrechaIpsArea"></div>
+	          </div>
+	        </div>
+	      </section>
+
+      <section class="view" id="viewPerfil">
+        <div class="sec-header">
+          <h2>Mi perfil</h2>
+          <p>Gestione su contraseña. Esta operación solo afecta a este navegador/dispositivo.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Cuenta</h3>
+            <span class="tag">Perfil</span>
+          </div>
+          <div class="card-body">
+            <div class="note">
+              <p>
+                Usuario: <strong id="perfilUser">—</strong>
+                <br />
+                Estado: <strong id="perfilEstado">—</strong>
+              </p>
+            </div>
+
+            <form id="passForm" class="form">
+              <label class="field">
+                <span>Contraseña actual</span>
+                <input id="passCurrent" type="password" autocomplete="current-password" required />
+              </label>
+              <label class="field">
+                <span>Nueva contraseña</span>
+                <input id="passNew" type="password" autocomplete="new-password" required />
+                <small class="hint">Recomendado: 8+ caracteres. Evite datos obvios.</small>
+              </label>
+              <label class="field">
+                <span>Confirmar nueva contraseña</span>
+                <input id="passNew2" type="password" autocomplete="new-password" required />
+              </label>
+
+              <div class="actions">
+                <button class="btn primary" type="submit"><i class="fas fa-key"></i> Cambiar contraseña</button>
+              </div>
+
+              <p class="success" id="passSuccess" role="status" aria-live="polite"></p>
+              <p class="error" id="passError" role="alert" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p><strong>MTESS</strong> — Encuesta (modo local)</p>
+      <p style="margin-top: 6px; opacity: 0.7">Los datos se almacenan en el navegador del usuario. No hay envío a servidor.</p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
